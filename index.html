@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Buchungssatz-Trainer KSK – 20 Aufgaben</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {font-family: Arial; background:#f1f2f4; margin:0; display:flex; justify-content:center;}
+.container {width:900px; max-width:95%; background:white; margin:20px; padding:25px;
+border-radius:14px; box-shadow:0 0 18px rgba(0,0,0,0.1);}
+h1{margin-top:0; font-size:22px;}
+.question-box{background:#fafafa; padding:17px; border-radius:11px; border:1px solid #dcdcdc;}
+.btn{width:100%; text-align:left; padding:12px; border-radius:10px; border:1px solid #d3d3d3;
+background:#ececec; margin-bottom:6px; cursor:pointer; font-size:15px;}
+.btn.correct{background:#d4ffd4; border-color:green;}
+.btn.wrong{background:#ffd6d6; border-color:red;}
+.nextBTN{margin-top:15px; padding:12px; width:100%; font-size:16px; border-radius:12px;
+background:#0056d2; color:white; border:none;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🧾 Buchungssatz-Training (20 Aufgaben)</h1>
+<p>Wähle den richtigen Buchungssatz – einfache Bestandskonten, kein GuV.</p>
+<hr><br>
+
+<div id="quiz"></div>
+</div>
+
+<script>
+const aufgaben = [
+{f:"Eingangsrechnung Ware 3.200€ auf Ziel.",a:["Ware an VLL","VLL an Ware","Bank an Ware","Kasse an VLL"],c:0},
+{f:"Einzahlung 500€ aus Kasse auf Bank.",a:["Bank an Kasse","Kasse an Bank","VLL an Bank","BGA an Kasse"],c:0},
+{f:"Kauf Bürostuhl 450€ bar.",a:["Kasse an BGA","BGA an Kasse","VLL an BGA","Bank an BGA"],c:1},
+{f:"Barzahlung eines Kunden 1.200€.",a:["FLL an Kasse","Kasse an FLL","VLL an Bank","BGA an Kasse"],c:1},
+{f:"Banküberweisung an Lieferanten 600€.",a:["VLL an Bank","Bank an VLL","Kasse an VLL","Bank an Kasse"],c:0},
+{f:"Kauf PC 950€ bar.",a:["Kasse an BGA","BGA an Kasse","Bank an BGA","VLL an BGA"],c:1},
+{f:"Einzahlung Kasse → Bank 400€.",a:["Bank an Kasse","Kasse an Bank","Bank an BGA","Kasse an VLL"],c:0},
+{f:"Kunde überweist 900€.",a:["Bank an FLL","FLL an Bank","Kasse an FLL","FLL an Kasse"],c:0},
+{f:"Kauf Maschine 4.500€ auf Ziel.",a:["Maschinen an VLL","VLL an Maschinen","BGA an Maschinen","Kasse an Maschinen"],c:0},
+{f:"Hypothekentilgung 5.000€ per Bank.",a:["Hypothek an Bank","Bank an Hypothek","VLL an Bank","Bank an VLL"],c:0},
+{f:"250€ aus Kasse zur Bank gebracht.",a:["Bank an Kasse","Kasse an Bank","BGA an Kasse","Kasse an Hypothek"],c:0},
+{f:"Barentnahme 300€ für Büromaterial.",a:["Kasse an BGA","BGA an Kasse","Bank an BGA","VLL an BGA"],c:1},
+{f:"Lieferantenrechnung bar 2.800€ beglichen.",a:["VLL an Kasse","Kasse an VLL","FLL an Kasse","Bank an VLL"],c:0},
+{f:"Überweisung Lieferanten 900€.",a:["VLL an Bank","Bank an VLL","Bank an FLL","FLL an Bank"],c:0},
+{f:"Kunde zahlt bar 700€.",a:["FLL an Kasse","Kasse an FLL","Kasse an Bank","VLL an Kasse"],c:1},
+{f:"Privatentnahme 200€ aus Kasse.",a:["Privat an Kasse","Kasse an Privat","Kasse an BGA","BGA an Kasse"],c:0},
+{f:"Kauf Werkzeuge bar 300€.",a:["Werkzeuge an Kasse","Kasse an Werkzeuge","VLL an Werkzeuge","Bank an Werkzeuge"],c:0},
+{f:"Barverkauf 280€.",a:["Kasse an FLL","FLL an Kasse","Kasse an Bank","Bank an FLL"],c:0},
+{f:"Privat → Bank Einzahlung 400€.",a:["Bank an Privat","Privat an Bank","Bank an Kasse","Kasse an Privat"],c:0},
+{f:"Kfz-Steuer bar bezahlt 150€.",a:["Kasse an Bank","Bank an Kasse","Aufwand an Kasse","Kasse an VLL"],c:2}
+];
+
+let i=0,p=0;
+function render(){
+let d=aufgaben[i],h=`<div class='question-box'><h3>Aufgabe ${i+1}/20</h3><p>${d.f}</p>`;
+d.a.forEach((x,n)=>h+=`<button class='btn' onclick='check(${n})'>${x}</button>`);
+document.getElementById("quiz").innerHTML=h;
+}
+function check(x){
+document.querySelectorAll(".btn").forEach((b,n)=>{
+if(n===aufgaben[i].c) b.classList.add("correct");
+if(x===n && x!==aufgaben[i].c) b.classList.add("wrong");
+b.onclick=null;});
+if(x===aufgaben[i].c) p++;
+setTimeout(()=>{i++;i<aufgaben.length?render():end()},900);
+}
+function end(){
+document.getElementById("quiz").innerHTML=
+`<h2>🎉 Fertig!</h2><p><b>${p}/20 korrekt</b></p><button class='nextBTN' onclick='location.reload()'>Neu starten</button>`;
+}
+render();
+</script>
+
+</body>
+</html>
