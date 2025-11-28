@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Buchungssatz-Trainer – Einfache & erweiterte Buchungssätze</title>
+  <title>Buchungssatz-Trainer – Grundlagen bis zusammengesetzter Buchungssatz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -18,19 +18,19 @@
     }
     .app {
       background: #ffffff;
-      width: 900px;
+      width: 960px;
       max-width: 96%;
       margin: 20px;
-      padding: 20px 22px 30px;
+      padding: 20px 22px 28px;
       border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
     }
     h1 {
       margin: 0 0 0.3rem 0;
-      font-size: 1.5rem;
+      font-size: 1.55rem;
     }
     .subtitle {
-      margin: 0 0 1rem 0;
+      margin: 0 0 1.1rem 0;
       color: #4b5563;
       font-size: 0.95rem;
     }
@@ -43,8 +43,32 @@
       color: #1d4ed8;
       margin-bottom: 0.4rem;
     }
+
+    .mode-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .mode-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .mode-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
     .progress-container {
-      margin: 0.8rem 0 1.2rem;
+      margin: 0.5rem 0 1rem;
     }
     .progress-label {
       font-size: 0.8rem;
@@ -52,6 +76,8 @@
       margin-bottom: 0.25rem;
       display: flex;
       justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
     .progress-bar {
       width: 100%;
@@ -61,5 +87,737 @@
       overflow: hidden;
     }
     .progress-fill {
-      height: 100%
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #22c55e);
+      width: 0%;
+      transition: width 0.25s ease-out;
+    }
 
+    .card {
+      background: #f9fafb;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 16px 18px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.4rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .card-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .question-text {
+      margin-top: 0.3rem;
+      font-size: 0.97rem;
+    }
+    .question-extra {
+      margin-top: 0.25rem;
+      font-size: 0.82rem;
+      color: #6b7280;
+    }
+
+    .choices {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .choice-btn {
+      border-radius: 10px;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.02s ease;
+    }
+    .choice-btn:hover {
+      background: #e5e7eb;
+    }
+    .choice-btn:active {
+      transform: scale(0.99);
+    }
+    .choice-btn.correct {
+      background: #ecfdf3;
+      border-color: #16a34a;
+      color: #14532d;
+    }
+    .choice-btn.wrong {
+      background: #fef2f2;
+      border-color: #dc2626;
+      color: #7f1d1d;
+    }
+    .choice-btn:disabled {
+      cursor: default;
+      opacity: 0.9;
+    }
+
+    .feedback {
+      margin-top: 0.8rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+    .feedback.correct {
+      background: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .feedback.wrong {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .actions {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.83rem;
+      color: #4b5563;
+      align-items: center;
+    }
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #2563eb;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .pill {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    @media (max-width: 640px) {
+      .app { margin: 10px; padding: 16px 14px 22px; border-radius: 10px; }
+      .mode-bar { gap: 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="badge">Buchungssatz-Trainer · einfacher & zusammengesetzter Buchungssatz</div>
+    <h1>Der Buchungssatz – Grundlagen, Anwendung und Vertiefung</h1>
+    <p class="subtitle">
+      Wähle zuerst ein Themengebiet. Beantworte dann die Fragen. Zu jeder Antwort erhältst du eine kurze Erklärung.
+    </p>
+
+    <div class="mode-bar" id="modeBar">
+      <!-- Buttons werden per JS eingefügt -->
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-label">
+        <span id="progressText">Bitte eine Kategorie wählen.</span>
+        <span id="scoreText">Punkte: 0</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <div id="cardContainer"></div>
+  </div>
+
+  <script>
+    // --- Aufgabensammlung nach Bereichen -----------------------
+
+    const categories = [
+      {
+        id: "grundlagen",
+        title: "Grundlagen & 4-Schritt-Methode",
+        description: "Systematik des Buchungssatzes, Soll/Haben, Aktiv/Passiv, 4-Schritt-Methode.",
+        tasks: [
+          {
+            text: "Welche Formulierungsregel gilt für Buchungssätze?",
+            extra: "",
+            choices: [
+              "HABEN an SOLL",
+              "SOLL an HABEN",
+              "AKTIV an PASSIV",
+              "PASSIV an AKTIV"
+            ],
+            correct: 1,
+            explanation:
+              "In der Buchhaltung werden Buchungssätze in der Form »SOLL an HABEN« formuliert. Die Konten im Soll stehen vor dem Wort »an«, die im Haben dahinter."
+          },
+          {
+            text: "Welche der folgenden Aussagen zur 4-Schritt-Methode ist korrekt?",
+            extra: "Denke an die Leitfragen im Unterricht: 1. Welche Konten? 2. Kontenart? 3. Bestandsmehrung/-minderung? 4. Soll oder Haben?",
+            choices: [
+              "Zuerst wird gebucht, danach überlege ich die Konten.",
+              "Ich bestimme zuerst die Konten und deren Kontenart, dann die Bestandsänderung, erst danach buche ich in Soll/Haben.",
+              "Ich schaue nur, ob Kasse oder Bank betroffen ist – mehr braucht es nicht.",
+              "Ich buche immer zuerst im Haben, dann im Soll."
+            ],
+            correct: 1,
+            explanation:
+              "Die 4-Schritt-Methode verläuft systematisch: (1) betroffene Konten, (2) Kontenart (Aktiv/Passiv), (3) Mehrung/Minderung, (4) Soll-/Haben-Buchung. Erst danach wird der Buchungssatz formuliert."
+          },
+          {
+            text: "Welche Aussage zu Aktiv- und Passivkonten stimmt?",
+            extra: "",
+            choices: [
+              "Aktivkonten nehmen im Haben zu, Passivkonten im Soll.",
+              "Aktivkonten nehmen im Soll zu, Passivkonten im Haben.",
+              "Beide Kontenarten nehmen immer im Soll zu.",
+              "Beide Kontenarten nehmen immer im Haben zu."
+            ],
+            correct: 1,
+            explanation:
+              "Bei Aktivkonten werden Zugänge im Soll und Abgänge im Haben gebucht. Bei Passivkonten ist es umgekehrt: Zugänge im Haben, Abgänge im Soll."
+          },
+          {
+            text: "Was versteht man unter einem einfachen Buchungssatz?",
+            extra: "",
+            choices: [
+              "Es werden genau zwei Konten berührt – ein Konto im Soll, ein Konto im Haben.",
+              "Es werden drei oder mehr Konten berührt.",
+              "Es wird nur ein Konto im Soll bebucht.",
+              "Es werden nur Erfolgskonten bebucht."
+            ],
+            correct: 0,
+            explanation:
+              "Ein einfacher Buchungssatz betrifft genau zwei Konten: ein Konto im Soll und ein Konto im Haben, z. B. »Bank an Kasse«."
+          },
+          {
+            text: "Wodurch unterscheidet sich ein zusammengesetzter Buchungssatz vom einfachen Buchungssatz?",
+            extra: "",
+            choices: [
+              "Er wird nur bei sehr hohen Beträgen verwendet.",
+              "Er enthält mehr als zwei Konten (mindestens ein Konto im Soll und zwei im Haben oder umgekehrt).",
+              "Er darf nur im Hauptbuch verwendet werden.",
+              "Er wird ausschließlich für Erfolgskonten eingesetzt."
+            ],
+            correct: 1,
+            explanation:
+              "Beim zusammengesetzten Buchungssatz werden mehr als zwei Konten angesprochen, z. B. »BGA 8.000 an VLL 7.500 + Kasse 500«."
+          },
+          {
+            text: "Welche Aussage zur Gleichheit von Soll- und Habenbeträgen ist korrekt?",
+            extra: "",
+            choices: [
+              "Im Haben wird immer mehr gebucht als im Soll.",
+              "Soll- und Habenbeträge müssen insgesamt immer gleich sein.",
+              "Die Sollseite darf maximal doppelt so groß sein wie die Habenseite.",
+              "Es gibt keine festen Regeln."
+            ],
+            correct: 1,
+            explanation:
+              "Unabhängig von der Anzahl der Konten gilt stets: Summe der Sollbuchungen = Summe der Habenbuchungen. Nur so bleibt die Bilanz im Gleichgewicht."
+          }
+        ]
+      },
+      {
+        id: "einfacher",
+        title: "Einfacher Buchungssatz",
+        description: "Standardfälle mit je zwei Konten – meist Bestandskonten.",
+        tasks: [
+          {
+            text: "Wir heben 500 € Bargeld vom Bankkonto ab.",
+            extra: "",
+            choices: [
+              "Kasse an Bank",
+              "Bank an Kasse",
+              "VLL an Bank",
+              "Kasse an VLL"
+            ],
+            correct: 0,
+            explanation:
+              "Kasse (Aktivkonto) nimmt zu → Soll, Bank (Aktivkonto) nimmt ab → Haben. → »Kasse an Bank«."
+          },
+          {
+            text: "Wir kaufen einen Schreibtisch auf Ziel für 1.000 €.",
+            extra: "",
+            choices: [
+              "BGA an VLL",
+              "VLL an BGA",
+              "Bank an BGA",
+              "BGA an Bank"
+            ],
+            correct: 0,
+            explanation:
+              "BGA (Aktivkonto) nimmt zu → Soll, VLL (Passivkonto) nimmt zu → Haben. → »BGA an VLL«."
+          },
+          {
+            text: "Ein Kunde zahlt 2.100 € bar in die Kasse.",
+            extra: "",
+            choices: [
+              "Kasse an Forderungen",
+              "Forderungen an Kasse",
+              "Bank an Forderungen",
+              "Kasse an Bank"
+            ],
+            correct: 0,
+            explanation:
+              "Kasse steigt (Aktivkonto → Soll), Forderungen sinken (Aktivkonto → Haben). → »Kasse an Forderungen«."
+          },
+          {
+            text: "Wir zahlen eine Lieferantenrechnung 6.300 € per Banküberweisung.",
+            extra: "",
+            choices: [
+              "VLL an Bank",
+              "Bank an VLL",
+              "VLL an Kasse",
+              "Kasse an VLL"
+            ],
+            correct: 0,
+            explanation:
+              "Die Verbindlichkeit (Passivkonto) nimmt ab → Soll, Bank (Aktivkonto) nimmt ab → Haben. → »VLL an Bank«."
+          },
+          {
+            text: "Wir kaufen einen Tischrechner bar für 350 €.",
+            extra: "",
+            choices: [
+              "BGA an Kasse",
+              "Kasse an BGA",
+              "BGA an Bank",
+              "Bank an BGA"
+            ],
+            correct: 0,
+            explanation:
+              "BGA steigt → Soll, Kasse sinkt → Haben. → »BGA an Kasse«."
+          },
+          {
+            text: "Wir heben 500 € vom Bankkonto ab und legen das Geld in die Kasse.",
+            extra: "Dieser Fall ist identisch mit der Einstiegssituation der Stunde.",
+            choices: [
+              "Kasse an Bank",
+              "Bank an Kasse",
+              "Kasse an VLL",
+              "VLL an Kasse"
+            ],
+            correct: 0,
+            explanation:
+              "Kasse nimmt zu (Soll), Bank nimmt ab (Haben). Es handelt sich um eine reine Umbuchung innerhalb der Aktivseite."
+          }
+        ]
+      },
+      {
+        id: "zusammengesetzt",
+        title: "Zusammengesetzter Buchungssatz",
+        description: "Fälle mit drei Konten, z. B. Anzahlung + Rest auf Ziel.",
+        tasks: [
+          {
+            text: "Die Global Bike Bayern GmbH kauft Büromöbel im Wert von 8.000 € auf Rechnung. 500 € zahlt sie sofort bar an.",
+            extra: "",
+            choices: [
+              "BGA 8.000 € an VLL 7.500 € und Kasse 500 €",
+              "BGA 8.000 € an Kasse 8.000 €",
+              "Kasse 500 € und VLL 7.500 € an BGA 8.000 €",
+              "VLL 8.000 € an BGA 8.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Zugang BGA 8.000 € → Soll. Abgang Kasse 500 € → Haben, Aufbau VLL 7.500 € → Haben. Summe Haben = 8.000 €."
+          },
+          {
+            text: "Kauf eines PKW (30.000 €): 2.500 € werden bar angezahlt, der Rest ist innerhalb von 30 Tagen zu zahlen.",
+            extra: "",
+            choices: [
+              "Fuhrpark 30.000 € an VLL 27.500 € und Kasse 2.500 €",
+              "Fuhrpark 30.000 € an Kasse 30.000 €",
+              "Fuhrpark 30.000 € an VLL 30.000 €",
+              "VLL 27.500 € und Kasse 2.500 € an Fuhrpark 30.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Fuhrpark steigt um 30.000 € → Soll. Kasse sinkt um 2.500 €, VLL steigt um 27.500 € → Haben. Zusammengesetzter Buchungssatz mit drei Konten."
+          },
+          {
+            text: "Tilgung einer Hypothek 35.000 €: 20.000 € per Banküberweisung, 15.000 € per Postbanküberweisung.",
+            extra: "",
+            choices: [
+              "Hypothek 35.000 € an Bank 20.000 € und Postbank 15.000 €",
+              "Bank 20.000 € und Postbank 15.000 € an Hypothek 35.000 €",
+              "Hypothek 35.000 € an Bank 35.000 €",
+              "Bank 35.000 € an Hypothek 35.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Hypothek (Passivkonto) wird um 35.000 € reduziert → Soll. Bank und Postbank (Aktivkonten) sinken zusammen um 35.000 € → Haben."
+          },
+          {
+            text: "Ein Kunde begleicht eine offene Forderung über 3.000 €: 2.100 € per Banküberweisung, 900 € bar.",
+            extra: "",
+            choices: [
+              "Bank 2.100 €, Kasse 900 € an Forderungen 3.000 €",
+              "Forderungen 3.000 € an Bank 2.100 € und Kasse 900 €",
+              "Bank 3.000 € an Forderungen 3.000 €",
+              "Kasse 3.000 € an Forderungen 3.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Forderungen (Aktivkonto) nehmen ab → Haben 3.000 €. Bank und Kasse steigen im Soll um 2.100 € bzw. 900 €."
+          },
+          {
+            text: "Kauf von Waren 6.000 €: 4.000 € bleiben als Verbindlichkeit offen, 2.000 € werden bar bezahlt.",
+            extra: "",
+            choices: [
+              "Waren 6.000 € an VLL 4.000 € und Kasse 2.000 €",
+              "Waren 6.000 € an Kasse 6.000 €",
+              "VLL 4.000 € und Kasse 2.000 € an Waren 6.000 €",
+              "Waren 6.000 € an VLL 6.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Warenbestand (Aktivkonto) steigt → Soll 6.000 €. Kasse sinkt → Haben 2.000 €, VLL steigt → Haben 4.000 €."
+          },
+          {
+            text: "Aufnahme eines Darlehens 20.000 €: 13.000 € werden auf das Bankkonto überwiesen, 7.000 € auf das Postbankkonto.",
+            extra: "",
+            choices: [
+              "Bank 13.000 €, Postbank 7.000 € an Darlehen 20.000 €",
+              "Darlehen 20.000 € an Bank 13.000 € und Postbank 7.000 €",
+              "Bank 20.000 € an Darlehen 20.000 €",
+              "Postbank 20.000 € an Darlehen 20.000 €"
+            ],
+            correct: 0,
+            explanation:
+              "Bank und Postbank (Aktivkonten) steigen zusammen um 20.000 € → Soll. Das Darlehen (Passivkonto) steigt im Haben um 20.000 €."
+          }
+        ]
+      },
+      {
+        id: "beleg",
+        title: "Belegbuchung & T-Konten",
+        description: "Belegprinzip und Unterschied Grundbuch/Hauptbuch.",
+        tasks: [
+          {
+            text: "Welcher Grundsatz der ordnungsgemäßen Buchführung gilt für Belegbuchungen?",
+            extra: "",
+            choices: [
+              "Keine Belege ohne Buchung.",
+              "Keine Buchung ohne Beleg.",
+              "Nur jede zweite Buchung benötigt einen Beleg.",
+              "Belege sind nur im Hauptbuch nötig."
+            ],
+            correct: 1,
+            explanation:
+              "Es gilt: »Keine Buchung ohne Beleg«. Jeder Buchungssatz muss auf einem nachvollziehbaren Beleg beruhen."
+          },
+          {
+            text: "Was ist der wesentliche Unterschied zwischen Grundbuch (Journal) und Hauptbuch?",
+            extra: "",
+            choices: [
+              "Im Grundbuch werden keine Beträge erfasst.",
+              "Im Grundbuch werden die Buchungssätze chronologisch festgehalten, im Hauptbuch werden sie nach Konten (T-Konten) geordnet.",
+              "Im Hauptbuch werden nur Erfolgskonten geführt.",
+              "Es gibt keinen Unterschied."
+            ],
+            correct: 1,
+            explanation:
+              "Im Grundbuch (Journal) stehen die Geschäftsvorfälle in zeitlicher Reihenfolge. Im Hauptbuch werden sie in T-Konten nach Konten sortiert verbucht."
+          },
+          {
+            text: "Im Beleg steht: „Wir kaufen einen Schreibtisch auf Ziel“. Welcher Buchungssatz ist korrekt?",
+            extra: "",
+            choices: [
+              "BGA an VLL",
+              "VLL an BGA",
+              "BGA an Bank",
+              "Kasse an BGA"
+            ],
+            correct: 0,
+            explanation:
+              "BGA steigt (Aktivkonto → Soll), Verbindlichkeiten steigen (Passivkonto → Haben). → »BGA an VLL«."
+          },
+          {
+            text: "Beim Buchen auf T-Konten gilt u. a.:",
+            extra: "",
+            choices: [
+              "Die Belegnummer wird auf dem Konto, das im Haben bebucht wird, nicht angegeben.",
+              "Auf jedem T-Konto wird die Nummer des Geschäftsfalls und das Gegenkonto notiert.",
+              "Die Beträge werden nur im Grundbuch erfasst, nicht auf den T-Konten.",
+              "Auf T-Konten werden keine Anfangsbestände geführt."
+            ],
+            correct: 1,
+            explanation:
+              "Für T-Konten gilt: Nummer des Geschäftsfalls und Gegenkonto angeben. So ist später nachvollziehbar, woher der Betrag stammt."
+          },
+          {
+            text: "Wir sehen im Konto BGA im Soll den Eintrag »1. VLL 1.000 €«. Was sagt das aus?",
+            extra: "",
+            choices: [
+              "Geschäftsfall Nr. 1: Zugang BGA 1.000 €, Gegenkonto VLL.",
+              "Geschäftsfall Nr. 1: Abgang BGA 1.000 €, Gegenkonto VLL.",
+              "Geschäftsfall Nr. 1: Zugang VLL 1.000 €, Gegenkonto BGA.",
+              "Geschäftsfall Nr. 1: Abgang VLL 1.000 €, Gegenkonto BGA."
+            ],
+            correct: 0,
+            explanation:
+              "Eintrag im Soll von BGA bedeutet Zugang. Das Gegenkonto ist VLL, Geschäftsfallnummer 1 – genau wie im Grundbuch gebucht."
+          },
+          {
+            text: "Welche Aussage beschreibt korrekt den Zusammenhang von Grundbuch und Hauptbuch?",
+            extra: "",
+            choices: [
+              "Zuerst wird im Hauptbuch gebucht, dann im Grundbuch.",
+              "Grundbuch und Hauptbuch enthalten völlig unterschiedliche Geschäftsvorfälle.",
+              "Die Buchungssätze werden zunächst im Grundbuch festgehalten und anschließend in die T-Konten des Hauptbuchs übertragen.",
+              "Nur das Grundbuch ist für den Jahresabschluss relevant."
+            ],
+            correct: 2,
+            explanation:
+              "Die Arbeitsabfolge ist: Erfassung des Geschäftsfalls im Grundbuch (Buchungssatz), danach Übernahme in die T-Konten des Hauptbuchs."
+          }
+        ]
+      },
+      {
+        id: "mix",
+        title: "Mix-Test (alle Bereiche)",
+        description: "Gemischter Test aus allen Bereichen, zufällige Auswahl.",
+        tasks: [] // wird dynamisch gefüllt
+      }
+    ];
+
+    // Mix-Kategorie mit Aufgaben aus allen Bereichen füllen
+    (function prepareMixCategory() {
+      const mixCat = categories.find(c => c.id === "mix");
+      let allTasks = [];
+      categories.forEach(c => {
+        if (c.id !== "mix") {
+          allTasks = allTasks.concat(c.tasks);
+        }
+      });
+      // leichte Durchmischung
+      allTasks.sort(() => Math.random() - 0.5);
+      // z. B. maximale Länge 20
+      mixCat.tasks = allTasks.slice(0, 20);
+    })();
+
+    // --- Zustand & UI-Elemente ------------------------------
+
+    let currentCategory = null;
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const modeBar = document.getElementById("modeBar");
+    const cardContainer = document.getElementById("cardContainer");
+    const progressText = document.getElementById("progressText");
+    const scoreText = document.getElementById("scoreText");
+    const progressFill = document.getElementById("progressFill");
+
+    // Kategorie-Buttons erzeugen
+    categories.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "mode-btn";
+      btn.textContent = cat.title;
+      btn.dataset.id = cat.id;
+      btn.addEventListener("click", () => switchCategory(cat.id));
+      modeBar.appendChild(btn);
+    });
+
+    function switchCategory(id) {
+      currentCategory = categories.find(c => c.id === id);
+      // aktive Klasse setzen
+      document.querySelectorAll(".mode-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.id === id);
+      });
+      // Zustand zurücksetzen
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      updateProgress();
+      renderTask();
+    }
+
+    function updateProgress() {
+      if (!currentCategory) {
+        progressText.textContent = "Bitte eine Kategorie wählen.";
+        scoreText.textContent = "Punkte: 0";
+        progressFill.style.width = "0%";
+        return;
+      }
+      const total = currentCategory.tasks.length;
+      progressText.textContent = `Aufgabe ${currentIndex + 1} von ${total} – ${currentCategory.title}`;
+      scoreText.textContent = `Punkte: ${score}`;
+      const percent = (currentIndex / total) * 100;
+      progressFill.style.width = `${percent}%`;
+    }
+
+    function renderTask() {
+      const cat = currentCategory;
+      if (!cat) {
+        cardContainer.innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Kategorie wählen</div>
+            </div>
+            <div class="question-text">
+              Bitte wähle oben eine Kategorie (z. B. „Grundlagen & 4-Schritt-Methode“ oder „Einfacher Buchungssatz“), um zu starten.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const t = cat.tasks[currentIndex];
+      answered = false;
+      updateProgress();
+
+      let choicesHtml = "";
+      t.choices.forEach((c, idx) => {
+        choicesHtml += `
+          <button class="choice-btn" data-index="${idx}">
+            ${String.fromCharCode(65 + idx)}. ${c}
+          </button>
+        `;
+      });
+
+      cardContainer.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Geschäftsfall / Frage</div>
+            <div class="card-meta">${cat.description}</div>
+          </div>
+          <div class="question-text">
+            ${t.text}
+          </div>
+          ${t.extra ? `<div class="question-extra">${t.extra}</div>` : ""}
+          <div class="choices">
+            ${choicesHtml}
+          </div>
+          <div id="feedback" class="feedback" style="display:none;"></div>
+          <div class="actions">
+            <span class="pill">Erst Antwort wählen, dann „Nächste Aufgabe“.</span>
+            <button class="btn" id="nextBtn" disabled>
+              Nächste Aufgabe →
+            </button>
+          </div>
+        </div>
+      `;
+
+      const buttons = cardContainer.querySelectorAll(".choice-btn");
+      const feedback = document.getElementById("feedback");
+      const nextBtn = document.getElementById("nextBtn");
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (answered) return;
+          answered = true;
+          const idx = parseInt(btn.getAttribute("data-index"), 10);
+
+          buttons.forEach((b, i) => {
+            if (i === t.correct) {
+              b.classList.add("correct");
+            }
+            if (i === idx && idx !== t.correct) {
+              b.classList.add("wrong");
+            }
+            b.disabled = true;
+          });
+
+          if (idx === t.correct) {
+            score++;
+            feedback.textContent = "Richtig: " + t.explanation;
+            feedback.className = "feedback correct";
+          } else {
+            feedback.textContent = "Nicht ganz: " + t.explanation;
+            feedback.className = "feedback wrong";
+          }
+          feedback.style.display = "block";
+          scoreText.textContent = `Punkte: ${score}`;
+          nextBtn.disabled = false;
+        });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        const total = currentCategory.tasks.length;
+        if (currentIndex < total - 1) {
+          currentIndex++;
+          renderTask();
+        } else {
+          renderResult();
+        }
+      });
+    }
+
+    function renderResult() {
+      const total = currentCategory.tasks.length;
+      const percent = Math.round((score / total) * 100);
+
+      let message = "";
+      if (percent === 100) {
+        message = "Top-Ergebnis – die Inhalte dieser Kategorie sitzen sehr sicher.";
+      } else if (percent >= 75) {
+        message = "Gutes Niveau – einzelne Fragen noch einmal gezielt wiederholen.";
+      } else if (percent >= 50) {
+        message = "Solide Basis – wiederhole vor allem die fachlichen Erklärtexte.";
+      } else {
+        message = "Hier lohnt sich eine Wiederholung der Grundlagen (z. B. 4-Schritt-Methode und Beispiele im Heft).";
+      }
+
+      progressFill.style.width = "100%";
+      progressText.textContent = `Ergebnis – ${currentCategory.title}`;
+      scoreText.textContent = `Punkte: ${score} von ${total}`;
+
+      cardContainer.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Auswertung</div>
+            <div class="card-meta">${currentCategory.description}</div>
+          </div>
+          <div class="question-text">
+            Du hast <strong>${score} von ${total}</strong> Aufgaben richtig gelöst (${percent} %).
+          </div>
+          <div class="feedback ${percent >= 50 ? "correct" : "wrong"}" style="margin-top:0.8rem;">
+            ${message}
+          </div>
+          <div class="actions" style="margin-top:1.1rem;">
+            <button class="btn" onclick="restartCategory()">Kategorie erneut starten</button>
+            <button class="btn secondary" onclick="backToSelection()">Zurück zur Kategorienwahl</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function restartCategory() {
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      updateProgress();
+      renderTask();
+    }
+
+    function backToSelection() {
+      currentCategory = null;
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      updateProgress();
+      renderTask();
+    }
+
+    // Initialbildschirm
+    renderTask();
+  </script>
+</body>
+</html>
