@@ -562,7 +562,7 @@
               "Für T-Konten gilt: Nummer des Geschäftsfalls und Gegenkonto angeben. So ist später nachvollziehbar, woher der Betrag stammt."
           },
           {
-            text: "Wir sehen im Konto BGA im Soll den Eintrag »1. VLL 1.000 €«. Was sagt das aus?",
+            text: "Wir sehen im Konto BGA im Soll den Eintrag „1. VLL 1.000 €“. Was sagt das aus?",
             extra: "",
             choices: [
               "Geschäftsfall Nr. 1: Zugang BGA 1.000 €, Gegenkonto VLL.",
@@ -606,11 +606,19 @@
           allTasks = allTasks.concat(c.tasks);
         }
       });
-      // leichte Durchmischung
       allTasks.sort(() => Math.random() - 0.5);
-      // z. B. maximale Länge 20
       mixCat.tasks = allTasks.slice(0, 20);
     })();
+
+    // Hilfsfunktion: zufällige Reihenfolge der Antwort-Indizes
+    function shuffledIndices(n) {
+      const arr = Array.from({ length: n }, (_, i) => i);
+      for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
 
     // --- Zustand & UI-Elemente ------------------------------
 
@@ -637,11 +645,9 @@
 
     function switchCategory(id) {
       currentCategory = categories.find(c => c.id === id);
-      // aktive Klasse setzen
       document.querySelectorAll(".mode-btn").forEach(b => {
         b.classList.toggle("active", b.dataset.id === id);
       });
-      // Zustand zurücksetzen
       currentIndex = 0;
       score = 0;
       answered = false;
@@ -683,11 +689,13 @@
       answered = false;
       updateProgress();
 
+      const order = shuffledIndices(t.choices.length);
       let choicesHtml = "";
-      t.choices.forEach((c, idx) => {
+      order.forEach((origIndex, displayIndex) => {
+        const c = t.choices[origIndex];
         choicesHtml += `
-          <button class="choice-btn" data-index="${idx}">
-            ${String.fromCharCode(65 + idx)}. ${c}
+          <button class="choice-btn" data-index="${origIndex}">
+            ${String.fromCharCode(65 + displayIndex)}. ${c}
           </button>
         `;
       });
@@ -725,7 +733,8 @@
           answered = true;
           const idx = parseInt(btn.getAttribute("data-index"), 10);
 
-          buttons.forEach((b, i) => {
+          buttons.forEach((b) => {
+            const i = parseInt(b.getAttribute("data-index"), 10);
             if (i === t.correct) {
               b.classList.add("correct");
             }
