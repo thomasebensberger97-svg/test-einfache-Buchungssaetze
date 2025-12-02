@@ -2,831 +2,1818 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Buchungssatz-Trainer – Grundlagen bis zusammengesetzter Buchungssatz</title>
+  <title>Vom EBK zum SBK – Buchungstrainer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.4;
+      background: #f3f4f6;
+      color: #111827;
     }
     body {
       margin: 0;
       padding: 0;
-      background: #f3f4f6;
       display: flex;
       justify-content: center;
     }
     .app {
-      background: #ffffff;
-      width: 960px;
-      max-width: 96%;
-      margin: 20px;
-      padding: 20px 22px 28px;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-    }
-    h1 {
-      margin: 0 0 0.3rem 0;
-      font-size: 1.55rem;
-    }
-    .subtitle {
-      margin: 0 0 1.1rem 0;
-      color: #4b5563;
-      font-size: 0.95rem;
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.75rem;
-      border-radius: 999px;
-      background: #e0efff;
-      color: #1d4ed8;
-      margin-bottom: 0.4rem;
-    }
-
-    .mode-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
-    .mode-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-      background: #e5e7eb;
-      color: #111827;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-    .mode-btn.active {
-      background: #2563eb;
-      color: #ffffff;
-    }
-
-    .progress-container {
-      margin: 0.5rem 0 1rem;
-    }
-    .progress-label {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-bottom: 0.25rem;
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .progress-bar {
+      max-width: 1100px;
       width: 100%;
-      height: 8px;
-      background: #e5e7eb;
-      border-radius: 999px;
-      overflow: hidden;
+      padding: 1.5rem;
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #2563eb, #22c55e);
-      width: 0%;
-      transition: width 0.25s ease-out;
+    h1,h2,h3 {
+      margin-top: 0;
     }
-
     .card {
-      background: #f9fafb;
-      border-radius: 14px;
-      border: 1px solid #e5e7eb;
-      padding: 16px 18px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
-    .card-header {
+    .flex {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.4rem;
-      gap: 0.5rem;
+      gap: 1rem;
       flex-wrap: wrap;
     }
-    .card-title {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-    .card-meta {
-      font-size: 0.8rem;
-      color: #6b7280;
-    }
-    .question-text {
-      margin-top: 0.3rem;
-      font-size: 0.97rem;
-    }
-    .question-extra {
-      margin-top: 0.25rem;
-      font-size: 0.82rem;
-      color: #6b7280;
-    }
-
-    .choices {
-      margin-top: 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-    }
-    .choice-btn {
-      border-radius: 10px;
-      padding: 0.55rem 0.75rem;
-      border: 1px solid #d1d5db;
-      background: #f3f4f6;
-      cursor: pointer;
-      text-align: left;
-      font-size: 0.95rem;
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.02s ease;
-    }
-    .choice-btn:hover {
-      background: #e5e7eb;
-    }
-    .choice-btn:active {
-      transform: scale(0.99);
-    }
-    .choice-btn.correct {
-      background: #ecfdf3;
-      border-color: #16a34a;
-      color: #14532d;
-    }
-    .choice-btn.wrong {
-      background: #fef2f2;
-      border-color: #dc2626;
-      color: #7f1d1d;
-    }
-    .choice-btn:disabled {
-      cursor: default;
-      opacity: 0.9;
-    }
-
-    .feedback {
-      margin-top: 0.8rem;
-      padding: 0.6rem 0.75rem;
-      border-radius: 10px;
-      font-size: 0.9rem;
-    }
-    .feedback.correct {
-      background: #ecfdf3;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-    .feedback.wrong {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
-
-    .actions {
-      margin-top: 0.9rem;
+    .flex-between {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 0.5rem;
-      font-size: 0.83rem;
-      color: #4b5563;
-      align-items: center;
     }
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 0.5rem 1.1rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: #2563eb;
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .btn.secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-    .pill {
+    .tag {
       display: inline-block;
       padding: 0.15rem 0.6rem;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       background: #e5e7eb;
       color: #374151;
     }
-
-    @media (max-width: 640px) {
-      .app { margin: 10px; padding: 16px 14px 22px; border-radius: 10px; }
-      .mode-bar { gap: 0.3rem; }
+    select, button {
+      font: inherit;
+    }
+    select {
+      padding: 0.35rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      min-width: 150px;
+      background: #f9fafb;
+    }
+    button {
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    button:disabled {
+      background: #9ca3af;
+      cursor: default;
+    }
+    .stage-nav {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .stage-btn {
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .stage-btn.active {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: #1d4ed8;
+    }
+    .stage-btn.done {
+      border-color: #16a34a;
+    }
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .status.ok {
+      color: #16a34a;
+    }
+    .status.err {
+      color: #b91c1c;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 0.25rem 0.4rem;
+      text-align: center;
+      vertical-align: top;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+    .konto-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+    .konto {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+    }
+    .konto-header {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .konto-type {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+    .konto table {
+      font-size: 0.75rem;
+    }
+    .small {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 0.9rem 0;
+    }
+    .progress-wrapper {
+      margin-top: 0.5rem;
+    }
+    .progress-container {
+      width: 100%;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 10px;
+      margin-top: 0.25rem;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: width 0.3s ease;
+    }
+    .quiz-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 0.25rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      cursor: pointer;
+      color: #111827;
+    }
+    .quiz-option.correct {
+      border-color: #16a34a;
+      background: #dcfce7;
+      color: #111827;
+    }
+    .quiz-option.wrong {
+      border-color: #b91c1c;
+      background: #fee2e2;
+      color: #111827;
+    }
+    .info-box {
+      border-left: 3px solid #2563eb;
+      padding-left: 0.6rem;
+      margin-top: 0.4rem;
+      background: #eff6ff;
+      border-radius: 4px;
+    }
+    .info-toggle {
+      font-size: 0.8rem;
+      background: #e5e7eb;
+      color: #111827;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: none;
+    }
+    .info-toggle:hover {
+      background: #d1d5db;
+    }
+    @media (max-width: 900px) {
+      .flex-between {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="badge">Buchungssatz-Trainer · einfacher & zusammengesetzter Buchungssatz</div>
-    <h1>Der Buchungssatz – Grundlagen, Anwendung und Vertiefung</h1>
-    <p class="subtitle">
-      Wähle zuerst ein Themengebiet. Beantworte dann die Fragen. Zu jeder Antwort erhältst du eine kurze Erklärung.
-    </p>
-
-    <div class="mode-bar" id="modeBar">
-      <!-- Buttons werden per JS eingefügt -->
-    </div>
-
-    <div class="progress-container">
-      <div class="progress-label">
-        <span id="progressText">Bitte eine Kategorie wählen.</span>
-        <span id="scoreText">Punkte: 0</span>
+<div class="app">
+  <div class="card">
+    <div class="flex-between">
+      <div>
+        <h1>Vom EBK zum SBK – Klicktrainer</h1>
+        <p class="small">
+          Trainieren Sie den kompletten Prozess: Eröffnungsbuchungen (EBK) → laufende Buchungen → Abschlussbuchungen (SBK).
+          Die Konten werden erst bebucht, wenn Sie nach dem Buchungssatz die Eintragung im T-Konto vornehmen.
+        </p>
       </div>
-      <div class="progress-bar">
-        <div id="progressFill" class="progress-fill"></div>
+      <div>
+        <div class="tag">Global Bike Bayern GmbH</div>
       </div>
     </div>
-
-    <div id="cardContainer"></div>
+    <div class="progress-wrapper">
+      <div class="flex-between">
+        <span class="small">Fortschritt insgesamt</span>
+        <span class="small" id="progressPercentLabel">0 %</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
   </div>
 
-  <script>
-    // --- Aufgabensammlung nach Bereichen -----------------------
+  <!-- Eröffnungsbilanz -->
+  <div class="card">
+    <h2>Eröffnungsbilanz (Ausgangssituation)</h2>
+    <p class="small">
+      Ausgangspunkt ist die Eröffnungsbilanz der Global Bike Bayern GmbH. 
+      Sie sehen hier vereinfacht die Anfangsbestände der Aktiv- und Passivkonten.
+    </p>
+    <div class="flex">
+      <div style="flex:1; min-width:260px;">
+        <h3>Aktiva</h3>
+        <table>
+          <thead>
+          <tr><th>Konto</th><th>Betrag in €</th></tr>
+          </thead>
+          <tbody id="obAktivBody"></tbody>
+        </table>
+      </div>
+      <div style="flex:1; min-width:260px;">
+        <h3>Passiva</h3>
+        <table>
+          <thead>
+          <tr><th>Konto</th><th>Betrag in €</th></tr>
+          </thead>
+          <tbody id="obPassivBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    const categories = [
+  <div class="card">
+    <h2>1. Schritt wählen</h2>
+    <div class="stage-nav" id="stageNav"></div>
+    <p class="small">
+      Arbeiten Sie jede Stufe der Reihe nach durch. Eine Aufgabe ist gelöst, wenn Buchungssatz und Eintragung im T-Konto korrekt sind.
+    </p>
+  </div>
+
+  <!-- Aufgabenkarte -->
+  <div class="card" id="taskCard">
+    <div class="flex-between">
+      <div>
+        <h2 id="stageTitle">Eröffnungsbuchungen</h2>
+        <div id="stageIntro" class="small"></div>
+        <!-- Infobox zum Kapitel -->
+        <button id="infoToggleBtn" class="info-toggle" type="button">Infobox zum Kapitel ein-/ausblenden</button>
+        <div id="infoBox" class="info-box small" style="display:none;"></div>
+      </div>
+      <div class="small" id="progressInfo"></div>
+    </div>
+
+    <div style="margin-top:0.75rem;">
+      <div class="flex-between">
+        <div>
+          <h3 id="taskTitle">Aufgabentext</h3>
+          <div class="tag" id="taskTag">Aufgabe 1</div>
+        </div>
+      </div>
+      <p id="taskDescription" class="small"></p>
+    </div>
+
+    <!-- Teil 1: Buchungssatz -->
+    <h3 style="margin-top:0.75rem;">Teil 1: Buchungssatz (Grundbuch)</h3>
+    <p class="small">
+      Wählen Sie das/die Soll- und Haben-Konto/Konten und formulieren Sie einen passenden Buchungssatz.
+      Bei Buchungssätzen mit mehr als zwei Konten können Sie ein zweites Soll- bzw. Habenkonto verwenden.
+    </p>
+
+    <!-- Mehrere Dropdowns + „an“ -->
+    <div class="flex" style="margin-top:0.25rem; align-items:flex-end; flex-wrap:wrap;">
+      <div>
+        <label for="debitSelect1"><strong>Soll-Konto 1:</strong></label><br>
+        <select id="debitSelect1"></select>
+      </div>
+      <div>
+        <label for="debitSelect2"><strong>Soll-Konto 2 (optional):</strong></label><br>
+        <select id="debitSelect2"></select>
+      </div>
+
+      <div style="font-weight:600; padding-bottom:0.3rem;">
+        an
+      </div>
+
+      <div>
+        <label for="creditSelect1"><strong>Haben-Konto 1:</strong></label><br>
+        <select id="creditSelect1"></select>
+      </div>
+      <div>
+        <label for="creditSelect2"><strong>Haben-Konto 2 (optional):</strong></label><br>
+        <select id="creditSelect2"></select>
+      </div>
+      <div>
+        <label><strong>Betrag:</strong></label><br>
+        <span id="amountLabel"></span>
+      </div>
+    </div>
+
+    <div style="margin-top:0.75rem;">
+      <button id="checkBtn">Teil 1: Buchungssatz prüfen</button>
+      <button id="nextBtn" disabled>Nächste Aufgabe</button>
+    </div>
+
+    <div id="taskStatus" class="status"></div>
+    <p id="taskHint" class="small"></p>
+
+    <!-- Teil 2: Eintragung in T-Konten -->
+    <div id="part2" style="margin-top:1rem; display:none;">
+      <hr>
+      <h3>Teil 2: Eintragung ins Hauptbuch (T-Konten)</h3>
+      <p id="part2Text" class="small">
+        Nachdem der Buchungssatz korrekt ist, wählen Sie bei den Konten, ob der Betrag im Soll oder im Haben eingetragen wird.
+      </p>
+      <p class="small">
+        Für die laufenden Buchungen arbeiten Sie hier direkt mit einer Hauptbuch-Ansicht: Markieren Sie genau die Konten, die von diesem Geschäftsvorfall betroffen sind.
+      </p>
+
+      <!-- Für Eröffnung/Abschluss Sammel-T-Konten, für laufende Buchungen Hauptbuch-Tabelle -->
+      <div id="localLedger" style="margin-top:0.75rem;"></div>
+
+      <div style="margin-top:0.75rem;">
+        <button id="tCheckBtn" disabled>Teil 2: Eintragung prüfen &amp; übernehmen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quizkarte -->
+  <div class="card" id="quizCard" style="display:none;">
+    <h2>Kurze Verständnisfragen</h2>
+    <p class="small" id="quizStageLabel"></p>
+    <p id="quizQuestion" class="small" style="font-weight:600;"></p>
+    <div id="quizOptions"></div>
+    <div id="quizStatus" class="status"></div>
+    <button id="quizNextBtn" disabled>Weiter</button>
+  </div>
+
+  <div class="card">
+    <div class="flex-between">
+      <h2>Hauptbuch – T-Konten (Übersicht)</h2>
+      <span class="small">
+        Nach korrekter Eintragung in Teil 2 werden die Beträge hier übernommen.
+      </span>
+    </div>
+    <div class="konto-grid" id="ledgerGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="flex-between">
+      <h2>Grundbuch – Übersicht der Buchungssätze</h2>
+      <span class="small">Filter nach Schritt:</span>
+      <select id="filterStage">
+        <option value="all">Alle</option>
+        <option value="eroeffnung">Eröffnungsbuchungen</option>
+        <option value="laufend">Laufende Buchungen</option>
+        <option value="abschluss">Abschlussbuchungen</option>
+      </select>
+    </div>
+    <div style="margin-top:0.5rem; max-height:260px; overflow:auto;">
+      <table id="journalTable">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Schritt</th>
+          <th>Buchungssatz</th>
+          <th>Betrag in €</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // -------------------- Datenbasis --------------------
+  const accountsData = [
+    { name: "Grundstücke", type: "A" },
+    { name: "Gebäude", type: "A" },
+    { name: "Maschinen", type: "A" },
+    { name: "Fuhrpark", type: "A" },
+    { name: "BGA", type: "A" },
+    { name: "Rohstoffe", type: "A" },
+    { name: "Fertige Erzeugnisse", type: "A" },
+    { name: "Forderungen", type: "A" },
+    { name: "Bankguthaben", type: "A" },
+    { name: "Kasse", type: "A" },
+    { name: "Eigenkapital", type: "P" },
+    { name: "Hypotheken", type: "P" },
+    { name: "Darlehen", type: "P" },
+    { name: "Verbindlichkeiten", type: "P" },
+    { name: "EBK", type: "sonst" },
+    { name: "SBK", type: "sonst" },
+  ];
+
+  const accountAbbrev = {
+    "Kasse": "KA",
+    "Bankguthaben": "BK",
+    "Forderungen": "FO",
+    "Rohstoffe": "RO",
+    "Verbindlichkeiten": "Vbl",
+    "Darlehen": "Dar",
+    "Fertige Erzeugnisse": "FE",
+    "BGA": "BGA",
+    "Maschinen": "MA",
+    "Gebäude": "GE",
+    "Grundstücke": "GR",
+    "Fuhrpark": "FP",
+    "Eigenkapital": "EK",
+    "Hypotheken": "Hyp",
+    "EBK": "EBK",
+    "SBK": "SBK"
+  };
+
+  const openingBalances = {
+    "Grundstücke": 300000,
+    "Gebäude": 240000,
+    "Maschinen": 950000,
+    "Fuhrpark": 150000,
+    "BGA": 40000,
+    "Rohstoffe": 70000,
+    "Fertige Erzeugnisse": 36000,
+    "Forderungen": 22000,
+    "Bankguthaben": 80000,
+    "Kasse": 500,
+    "Eigenkapital": 470500,
+    "Hypotheken": 520000,
+    "Darlehen": 710000,
+    "Verbindlichkeiten": 154000
+  };
+
+  const closingBalances = {
+    "Grundstücke": 300000,
+    "Gebäude": 240000,
+    "Maschinen": 980000,
+    "Fuhrpark": 150000,
+    "BGA": 41500,
+    "Rohstoffe": 78000,
+    "Fertige Erzeugnisse": 34000,
+    "Forderungen": 21000,
+    "Bankguthaben": 77000,
+    "Kasse": 2300,
+    "Eigenkapital": 470500,
+    "Hypotheken": 520000,
+    "Darlehen": 700000,
+    "Verbindlichkeiten": 165300
+  };
+
+  const stages = [
+    { id: "eroeffnung", title: "Eröffnungsbuchungen (vom EBK in die Konten)" },
+    { id: "laufend",   title: "Laufende Buchungen (Geschäftsfälle im Jahr)" },
+    { id: "abschluss", title: "Abschlussbuchungen (von den Konten ins SBK)" }
+  ];
+
+  const stageIntros = {
+    "eroeffnung":
+      "In diesem Schritt werden alle Bestandskonten aus der Eröffnungsbilanz in die Buchführung übernommen.",
+    "laufend":
+      "Hier werden typische Geschäftsfälle des Geschäftsjahres gebucht.",
+    "abschluss":
+      "Zum Jahresende werden alle Bestandskonten über das Schlussbilanzkonto (SBK) abgeschlossen."
+  };
+
+  // Ausführlichere Infoblöcke je Kapitel
+  const stageInfoBlocks = {
+    "eroeffnung":
+      "<strong>Eröffnungsbuchungen – Überblick</strong><br>" +
+      "• Ausgangspunkt ist die <em>Eröffnungsbilanz</em> (Stichtag: Jahresbeginn).<br>" +
+      "• Die Bilanz wird in Kontenform überführt: Das <strong>Eröffnungsbilanzkonto (EBK)</strong> ist das Hilfskonto dafür.<br>" +
+      "• <strong>Aktivkonten</strong> werden immer im Soll eröffnet, das EBK steht im Haben.<br>" +
+      "• <strong>Passivkonten</strong> werden im Haben eröffnet, das EBK steht im Soll.<br>" +
+      "• Ziel: Alle Anfangsbestände der Bilanz stehen anschließend als Anfangsbestände in den einzelnen Bestandskonten.<br>" +
+      "• Der Buchungssatz „Aktivkonto an EBK“ bzw. „EBK an Passivkonto“ ist ein <em>allgemeiner</em> Buchungssatz, der für viele Konten gleichzeitig gilt.",
+    "laufend":
+      "<strong>Laufende Buchungen – Überblick</strong><br>" +
+      "• Jeder Geschäftsvorfall wird zuerst im <strong>Grundbuch</strong> als Buchungssatz („Soll an Haben“) festgehalten.<br>" +
+      "• Danach wird der Geschäftsvorfall im <strong>Hauptbuch</strong> in den T-Konten eingetragen (systematische Ordnung).<br>" +
+      "• <strong>Aktivkonto</strong>: Zugang im Soll, Abgang im Haben.<br>" +
+      "• <strong>Passivkonto</strong>: Zugang im Haben, Abgang im Soll.<br>" +
+      "• Jeder Buchungssatz berührt mind. zwei Konten, bei komplexeren Vorgängen auch drei oder vier Konten.<br>" +
+      "• Wichtig ist nicht nur „welche Konten“, sondern auch „auf welcher Seite?“ (Soll oder Haben).<br>" +
+      "• Typische Beispiele: Barverkauf, Banküberweisung, gemischte Zahlung (bar + Bank), Einkauf auf Ziel, Umbuchung von Schulden.",
+    "abschluss":
+      "<strong>Abschlussbuchungen – Überblick</strong><br>" +
+      "• Am Jahresende werden alle Bestandskonten über das <strong>Schlussbilanzkonto (SBK)</strong> abgeschlossen.<br>" +
+      "• <strong>Aktivkonten</strong>: Abschluss über die Habenseite – Buchungssatz: „SBK an Aktivkonto“.<br>" +
+      "• <strong>Passivkonten</strong>: Abschluss über die Sollseite – Buchungssatz: „Passivkonto an SBK“.<br>" +
+      "• Im T-Konto entsteht nach dem Abschluss die typische <strong>„Buchhalternase“</strong> (Summenstrich).<br>" +
+      "• Die Salden der Konten wandern zurück in die Bilanz: aus der <em>Schlussbilanz</em> wird per EBK im Folgejahr wieder die Eröffnungsbilanz."
+  };
+
+  const comprehensionQuestions = {
+    eroeffnung: [
       {
-        id: "grundlagen",
-        title: "Grundlagen & 4-Schritt-Methode",
-        description: "Systematik des Buchungssatzes, Soll/Haben, Aktiv/Passiv, 4-Schritt-Methode.",
-        tasks: [
-          {
-            text: "Welche Formulierungsregel gilt für Buchungssätze?",
-            extra: "",
-            choices: [
-              "HABEN an SOLL",
-              "SOLL an HABEN",
-              "AKTIV an PASSIV",
-              "PASSIV an AKTIV"
-            ],
-            correct: 1,
-            explanation:
-              "In der Buchhaltung werden Buchungssätze in der Form »SOLL an HABEN« formuliert. Die Konten im Soll stehen vor dem Wort »an«, die im Haben dahinter."
-          },
-          {
-            text: "Welche der folgenden Aussagen zur 4-Schritt-Methode ist korrekt?",
-            extra: "Denke an die Leitfragen im Unterricht: 1. Welche Konten? 2. Kontenart? 3. Bestandsmehrung/-minderung? 4. Soll oder Haben?",
-            choices: [
-              "Zuerst wird gebucht, danach überlege ich die Konten.",
-              "Ich bestimme zuerst die Konten und deren Kontenart, dann die Bestandsänderung, erst danach buche ich in Soll/Haben.",
-              "Ich schaue nur, ob Kasse oder Bank betroffen ist – mehr braucht es nicht.",
-              "Ich buche immer zuerst im Haben, dann im Soll."
-            ],
-            correct: 1,
-            explanation:
-              "Die 4-Schritt-Methode verläuft systematisch: (1) betroffene Konten, (2) Kontenart (Aktiv/Passiv), (3) Mehrung/Minderung, (4) Soll-/Haben-Buchung. Erst danach wird der Buchungssatz formuliert."
-          },
-          {
-            text: "Welche Aussage zu Aktiv- und Passivkonten stimmt?",
-            extra: "",
-            choices: [
-              "Aktivkonten nehmen im Haben zu, Passivkonten im Soll.",
-              "Aktivkonten nehmen im Soll zu, Passivkonten im Haben.",
-              "Beide Kontenarten nehmen immer im Soll zu.",
-              "Beide Kontenarten nehmen immer im Haben zu."
-            ],
-            correct: 1,
-            explanation:
-              "Bei Aktivkonten werden Zugänge im Soll und Abgänge im Haben gebucht. Bei Passivkonten ist es umgekehrt: Zugänge im Haben, Abgänge im Soll."
-          },
-          {
-            text: "Was versteht man unter einem einfachen Buchungssatz?",
-            extra: "",
-            choices: [
-              "Es werden genau zwei Konten berührt – ein Konto im Soll, ein Konto im Haben.",
-              "Es werden drei oder mehr Konten berührt.",
-              "Es wird nur ein Konto im Soll bebucht.",
-              "Es werden nur Erfolgskonten bebucht."
-            ],
-            correct: 0,
-            explanation:
-              "Ein einfacher Buchungssatz betrifft genau zwei Konten: ein Konto im Soll und ein Konto im Haben, z. B. »Bank an Kasse«."
-          },
-          {
-            text: "Wodurch unterscheidet sich ein zusammengesetzter Buchungssatz vom einfachen Buchungssatz?",
-            extra: "",
-            choices: [
-              "Er wird nur bei sehr hohen Beträgen verwendet.",
-              "Er enthält mehr als zwei Konten (mindestens ein Konto im Soll und zwei im Haben oder umgekehrt).",
-              "Er darf nur im Hauptbuch verwendet werden.",
-              "Er wird ausschließlich für Erfolgskonten eingesetzt."
-            ],
-            correct: 1,
-            explanation:
-              "Beim zusammengesetzten Buchungssatz werden mehr als zwei Konten angesprochen, z. B. »BGA 8.000 an VLL 7.500 + Kasse 500«."
-          },
-          {
-            text: "Welche Aussage zur Gleichheit von Soll- und Habenbeträgen ist korrekt?",
-            extra: "",
-            choices: [
-              "Im Haben wird immer mehr gebucht als im Soll.",
-              "Soll- und Habenbeträge müssen insgesamt immer gleich sein.",
-              "Die Sollseite darf maximal doppelt so groß sein wie die Habenseite.",
-              "Es gibt keine festen Regeln."
-            ],
-            correct: 1,
-            explanation:
-              "Unabhängig von der Anzahl der Konten gilt stets: Summe der Sollbuchungen = Summe der Habenbuchungen. Nur so bleibt die Bilanz im Gleichgewicht."
-          }
-        ]
+        text: "Wie werden Aktivkonten grundsätzlich bei der Eröffnung behandelt?",
+        options: [
+          "Sie werden im Haben eröffnet.",
+          "Sie werden im Soll eröffnet.",
+          "Sie werden gar nicht eröffnet."
+        ],
+        correctIndex: 1,
+        explanation: "Aktivkonten werden grundsätzlich auf der Soll-Seite eröffnet.",
+        answered: false
       },
       {
-        id: "einfacher",
-        title: "Einfacher Buchungssatz",
-        description: "Standardfälle mit je zwei Konten – meist Bestandskonten.",
-        tasks: [
-          {
-            text: "Wir heben 500 € Bargeld vom Bankkonto ab.",
-            extra: "",
-            choices: [
-              "Kasse an Bank",
-              "Bank an Kasse",
-              "VLL an Bank",
-              "Kasse an VLL"
-            ],
-            correct: 0,
-            explanation:
-              "Kasse (Aktivkonto) nimmt zu → Soll, Bank (Aktivkonto) nimmt ab → Haben. → »Kasse an Bank«."
-          },
-          {
-            text: "Wir kaufen einen Schreibtisch auf Ziel für 1.000 €.",
-            extra: "",
-            choices: [
-              "BGA an VLL",
-              "VLL an BGA",
-              "Bank an BGA",
-              "BGA an Bank"
-            ],
-            correct: 0,
-            explanation:
-              "BGA (Aktivkonto) nimmt zu → Soll, VLL (Passivkonto) nimmt zu → Haben. → »BGA an VLL«."
-          },
-          {
-            text: "Ein Kunde zahlt 2.100 € bar in die Kasse.",
-            extra: "",
-            choices: [
-              "Kasse an Forderungen",
-              "Forderungen an Kasse",
-              "Bank an Forderungen",
-              "Kasse an Bank"
-            ],
-            correct: 0,
-            explanation:
-              "Kasse steigt (Aktivkonto → Soll), Forderungen sinken (Aktivkonto → Haben). → »Kasse an Forderungen«."
-          },
-          {
-            text: "Wir zahlen eine Lieferantenrechnung 6.300 € per Banküberweisung.",
-            extra: "",
-            choices: [
-              "VLL an Bank",
-              "Bank an VLL",
-              "VLL an Kasse",
-              "Kasse an VLL"
-            ],
-            correct: 0,
-            explanation:
-              "Die Verbindlichkeit (Passivkonto) nimmt ab → Soll, Bank (Aktivkonto) nimmt ab → Haben. → »VLL an Bank«."
-          },
-          {
-            text: "Wir kaufen einen Tischrechner bar für 350 €.",
-            extra: "",
-            choices: [
-              "BGA an Kasse",
-              "Kasse an BGA",
-              "BGA an Bank",
-              "Bank an BGA"
-            ],
-            correct: 0,
-            explanation:
-              "BGA steigt → Soll, Kasse sinkt → Haben. → »BGA an Kasse«."
-          },
-          {
-            text: "Wir heben 500 € vom Bankkonto ab und legen das Geld in die Kasse.",
-            extra: "Dieser Fall ist identisch mit der Einstiegssituation der Stunde.",
-            choices: [
-              "Kasse an Bank",
-              "Bank an Kasse",
-              "Kasse an VLL",
-              "VLL an Kasse"
-            ],
-            correct: 0,
-            explanation:
-              "Kasse nimmt zu (Soll), Bank nimmt ab (Haben). Es handelt sich um eine reine Umbuchung innerhalb der Aktivseite."
-          }
-        ]
-      },
-      {
-        id: "zusammengesetzt",
-        title: "Zusammengesetzter Buchungssatz",
-        description: "Fälle mit drei Konten, z. B. Anzahlung + Rest auf Ziel.",
-        tasks: [
-          {
-            text: "Die Global Bike Bayern GmbH kauft Büromöbel im Wert von 8.000 € auf Rechnung. 500 € zahlt sie sofort bar an.",
-            extra: "",
-            choices: [
-              "BGA 8.000 € an VLL 7.500 € und Kasse 500 €",
-              "BGA 8.000 € an Kasse 8.000 €",
-              "Kasse 500 € und VLL 7.500 € an BGA 8.000 €",
-              "VLL 8.000 € an BGA 8.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Zugang BGA 8.000 € → Soll. Abgang Kasse 500 € → Haben, Aufbau VLL 7.500 € → Haben. Summe Haben = 8.000 €."
-          },
-          {
-            text: "Kauf eines PKW (30.000 €): 2.500 € werden bar angezahlt, der Rest ist innerhalb von 30 Tagen zu zahlen.",
-            extra: "",
-            choices: [
-              "Fuhrpark 30.000 € an VLL 27.500 € und Kasse 2.500 €",
-              "Fuhrpark 30.000 € an Kasse 30.000 €",
-              "Fuhrpark 30.000 € an VLL 30.000 €",
-              "VLL 27.500 € und Kasse 2.500 € an Fuhrpark 30.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Fuhrpark steigt um 30.000 € → Soll. Kasse sinkt um 2.500 €, VLL steigt um 27.500 € → Haben. Zusammengesetzter Buchungssatz mit drei Konten."
-          },
-          {
-            text: "Tilgung einer Hypothek 35.000 €: 20.000 € per Banküberweisung, 15.000 € per Postbanküberweisung.",
-            extra: "",
-            choices: [
-              "Hypothek 35.000 € an Bank 20.000 € und Postbank 15.000 €",
-              "Bank 20.000 € und Postbank 15.000 € an Hypothek 35.000 €",
-              "Hypothek 35.000 € an Bank 35.000 €",
-              "Bank 35.000 € an Hypothek 35.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Hypothek (Passivkonto) wird um 35.000 € reduziert → Soll. Bank und Postbank (Aktivkonten) sinken zusammen um 35.000 € → Haben."
-          },
-          {
-            text: "Ein Kunde begleicht eine offene Forderung über 3.000 €: 2.100 € per Banküberweisung, 900 € bar.",
-            extra: "",
-            choices: [
-              "Bank 2.100 €, Kasse 900 € an Forderungen 3.000 €",
-              "Forderungen 3.000 € an Bank 2.100 € und Kasse 900 €",
-              "Bank 3.000 € an Forderungen 3.000 €",
-              "Kasse 3.000 € an Forderungen 3.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Forderungen (Aktivkonto) nehmen ab → Haben 3.000 €. Bank und Kasse steigen im Soll um 2.100 € bzw. 900 €."
-          },
-          {
-            text: "Kauf von Waren 6.000 €: 4.000 € bleiben als Verbindlichkeit offen, 2.000 € werden bar bezahlt.",
-            extra: "",
-            choices: [
-              "Waren 6.000 € an VLL 4.000 € und Kasse 2.000 €",
-              "Waren 6.000 € an Kasse 6.000 €",
-              "VLL 4.000 € und Kasse 2.000 € an Waren 6.000 €",
-              "Waren 6.000 € an VLL 6.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Warenbestand (Aktivkonto) steigt → Soll 6.000 €. Kasse sinkt → Haben 2.000 €, VLL steigt → Haben 4.000 €."
-          },
-          {
-            text: "Aufnahme eines Darlehens 20.000 €: 13.000 € werden auf das Bankkonto überwiesen, 7.000 € auf das Postbankkonto.",
-            extra: "",
-            choices: [
-              "Bank 13.000 €, Postbank 7.000 € an Darlehen 20.000 €",
-              "Darlehen 20.000 € an Bank 13.000 € und Postbank 7.000 €",
-              "Bank 20.000 € an Darlehen 20.000 €",
-              "Postbank 20.000 € an Darlehen 20.000 €"
-            ],
-            correct: 0,
-            explanation:
-              "Bank und Postbank (Aktivkonten) steigen zusammen um 20.000 € → Soll. Das Darlehen (Passivkonto) steigt im Haben um 20.000 €."
-          }
-        ]
-      },
-      {
-        id: "beleg",
-        title: "Belegbuchung & T-Konten",
-        description: "Belegprinzip und Unterschied Grundbuch/Hauptbuch.",
-        tasks: [
-          {
-            text: "Welcher Grundsatz der ordnungsgemäßen Buchführung gilt für Belegbuchungen?",
-            extra: "",
-            choices: [
-              "Keine Belege ohne Buchung.",
-              "Keine Buchung ohne Beleg.",
-              "Nur jede zweite Buchung benötigt einen Beleg.",
-              "Belege sind nur im Hauptbuch nötig."
-            ],
-            correct: 1,
-            explanation:
-              "Es gilt: »Keine Buchung ohne Beleg«. Jeder Buchungssatz muss auf einem nachvollziehbaren Beleg beruhen."
-          },
-          {
-            text: "Was ist der wesentliche Unterschied zwischen Grundbuch (Journal) und Hauptbuch?",
-            extra: "",
-            choices: [
-              "Im Grundbuch werden keine Beträge erfasst.",
-              "Im Grundbuch werden die Buchungssätze chronologisch festgehalten, im Hauptbuch werden sie nach Konten (T-Konten) geordnet.",
-              "Im Hauptbuch werden nur Erfolgskonten geführt.",
-              "Es gibt keinen Unterschied."
-            ],
-            correct: 1,
-            explanation:
-              "Im Grundbuch (Journal) stehen die Geschäftsvorfälle in zeitlicher Reihenfolge. Im Hauptbuch werden sie in T-Konten nach Konten sortiert verbucht."
-          },
-          {
-            text: "Im Beleg steht: „Wir kaufen einen Schreibtisch auf Ziel“. Welcher Buchungssatz ist korrekt?",
-            extra: "",
-            choices: [
-              "BGA an VLL",
-              "VLL an BGA",
-              "BGA an Bank",
-              "Kasse an BGA"
-            ],
-            correct: 0,
-            explanation:
-              "BGA steigt (Aktivkonto → Soll), Verbindlichkeiten steigen (Passivkonto → Haben). → »BGA an VLL«."
-          },
-          {
-            text: "Beim Buchen auf T-Konten gilt u. a.:",
-            extra: "",
-            choices: [
-              "Die Belegnummer wird auf dem Konto, das im Haben bebucht wird, nicht angegeben.",
-              "Auf jedem T-Konto wird die Nummer des Geschäftsfalls und das Gegenkonto notiert.",
-              "Die Beträge werden nur im Grundbuch erfasst, nicht auf den T-Konten.",
-              "Auf T-Konten werden keine Anfangsbestände geführt."
-            ],
-            correct: 1,
-            explanation:
-              "Für T-Konten gilt: Nummer des Geschäftsfalls und Gegenkonto angeben. So ist später nachvollziehbar, woher der Betrag stammt."
-          },
-          {
-            text: "Wir sehen im Konto BGA im Soll den Eintrag „1. VLL 1.000 €“. Was sagt das aus?",
-            extra: "",
-            choices: [
-              "Geschäftsfall Nr. 1: Zugang BGA 1.000 €, Gegenkonto VLL.",
-              "Geschäftsfall Nr. 1: Abgang BGA 1.000 €, Gegenkonto VLL.",
-              "Geschäftsfall Nr. 1: Zugang VLL 1.000 €, Gegenkonto BGA.",
-              "Geschäftsfall Nr. 1: Abgang VLL 1.000 €, Gegenkonto BGA."
-            ],
-            correct: 0,
-            explanation:
-              "Eintrag im Soll von BGA bedeutet Zugang. Das Gegenkonto ist VLL, Geschäftsfallnummer 1 – genau wie im Grundbuch gebucht."
-          },
-          {
-            text: "Welche Aussage beschreibt korrekt den Zusammenhang von Grundbuch und Hauptbuch?",
-            extra: "",
-            choices: [
-              "Zuerst wird im Hauptbuch gebucht, dann im Grundbuch.",
-              "Grundbuch und Hauptbuch enthalten völlig unterschiedliche Geschäftsvorfälle.",
-              "Die Buchungssätze werden zunächst im Grundbuch festgehalten und anschließend in die T-Konten des Hauptbuchs übertragen.",
-              "Nur das Grundbuch ist für den Jahresabschluss relevant."
-            ],
-            correct: 2,
-            explanation:
-              "Die Arbeitsabfolge ist: Erfassung des Geschäftsfalls im Grundbuch (Buchungssatz), danach Übernahme in die T-Konten des Hauptbuchs."
-          }
-        ]
-      },
-      {
-        id: "mix",
-        title: "Mix-Test (alle Bereiche)",
-        description: "Gemischter Test aus allen Bereichen, zufällige Auswahl.",
-        tasks: [] // wird dynamisch gefüllt
+        text: "Was passiert bei der Eröffnungsbuchung mit dem EBK?",
+        options: [
+          "Es steht immer im Soll.",
+          "Es steht immer im Haben.",
+          "Es kann im Soll oder im Haben stehen, je nach Kontoart."
+        ],
+        correctIndex: 2,
+        explanation: "Das EBK steht bei der Eröffnung von Aktivkonten im Haben, bei Passivkonten im Soll.",
+        answered: false
       }
-    ];
+    ],
+    laufend: [
+      {
+        text: "Welche Aussage beschreibt den Unterschied zwischen Grundbuch und Hauptbuch am besten?",
+        options: [
+          "Im Grundbuch stehen nur T-Konten, im Hauptbuch nur Buchungssätze.",
+          "Im Grundbuch werden die Buchungssätze zeitlich erfasst, im Hauptbuch auf Konten verteilt.",
+          "Beide sind identisch aufgebaut."
+        ],
+        correctIndex: 1,
+        explanation: "Das Grundbuch enthält die zeitliche Erfassung, das Hauptbuch die Verteilung auf Konten.",
+        answered: false
+      },
+      {
+        text: "Was passiert bei einer Barabhebung vom Bankkonto (vereinfacht)?",
+        options: [
+          "Kasse nimmt ab, Bankguthaben nimmt zu.",
+          "Kasse nimmt zu, Bankguthaben nimmt ab.",
+          "Beide Konten nehmen zu."
+        ],
+        correctIndex: 1,
+        explanation: "Es wird Bargeld abgehoben: Kasse ↑ (Soll), Bankguthaben ↓ (Haben).",
+        answered: false
+      }
+    ]
+  };
 
-    // Mix-Kategorie mit Aufgaben aus allen Bereichen füllen
-    (function prepareMixCategory() {
-      const mixCat = categories.find(c => c.id === "mix");
-      let allTasks = [];
-      categories.forEach(c => {
-        if (c.id !== "mix") {
-          allTasks = allTasks.concat(c.tasks);
+  // Aufgaben – inkl. Mehrkonten-GF
+  const tasks = [
+    {
+      stage: "eroeffnung",
+      type: "groupOpening",
+      group: "aktiv",
+      title: "Allgemeiner Buchungssatz zur Eröffnung der Aktivkonten",
+      description:
+        "Alle Aktivkonten (z. B. Grundstücke, Gebäude, Maschinen, Rohstoffe, Bank, Kasse …) sollen aus der Eröffnungsbilanz in die Konten übernommen werden. " +
+        "Formulieren Sie zunächst den allgemeinen Buchungssatz (z. B. „Aktivkonto an EBK“), bevor Sie die Eintragung im T-Konto vornehmen.",
+      hint: "Aktivkonten werden im Soll, das EBK im Haben eröffnet.",
+      amount: null
+    },
+    {
+      stage: "eroeffnung",
+      type: "groupOpening",
+      group: "passiv",
+      title: "Allgemeiner Buchungssatz zur Eröffnung der Passivkonten",
+      description:
+        "Alle Passivkonten (z. B. Eigenkapital, Hypotheken, Darlehen, Verbindlichkeiten) sollen aus der Eröffnungsbilanz in die Konten übernommen werden. " +
+        "Formulieren Sie zunächst den allgemeinen Buchungssatz (z. B. „EBK an Passivkonto“) und tragen Sie ihn anschließend als Sammelbuchung ein.",
+      hint: "Passivkonten werden im Haben, das EBK im Soll eröffnet.",
+      amount: null
+    },
+
+    // Laufende Buchungen – Standardfälle
+    {
+      stage: "laufend",
+      title: "GF 1 – Barverkauf von Fertigerzeugnissen",
+      description: "Wir verkaufen Fertigerzeugnisse gegen Barzahlung 2.400,00 €.",
+      debits: ["Kasse"],
+      credits: ["Fertige Erzeugnisse"],
+      amount: 2400,
+      hint: "Bestandsmehrung Kasse (Soll), Bestandsminderung Fertige Erzeugnisse (Haben)."
+    },
+    {
+      stage: "laufend",
+      title: "GF 2 – Barer Kauf eines Büroschranks",
+      description: "Wir kaufen einen Büroschrank gegen Barzahlung 1.200,00 €.",
+      debits: ["BGA"],
+      credits: ["Kasse"],
+      amount: 1200,
+      hint: "Anlagevermögen nimmt zu (Soll), Kasse nimmt ab (Haben)."
+    },
+    {
+      stage: "laufend",
+      title: "GF 3 – Kunde zahlt per Bank",
+      description: "Ein Kunde zahlt zur Begleichung seiner Schulden 3.800,00 € per Bank.",
+      debits: ["Bankguthaben"],
+      credits: ["Forderungen"],
+      amount: 3800,
+      hint: "Forderungen werden geringer (Haben), Bankguthaben steigt (Soll)."
+    },
+    {
+      stage: "laufend",
+      title: "GF 4 – Verkauf auf Ziel",
+      description: "Wir verkaufen Fertigerzeugnisse in Höhe von 2.100,00 € auf Ziel.",
+      debits: ["Forderungen"],
+      credits: ["Fertige Erzeugnisse"],
+      amount: 2100,
+      hint: "Forderungen steigen, Fertige Erzeugnisse sinken."
+    },
+    {
+      stage: "laufend",
+      title: "GF 5 – Umwandlung von Verbindlichkeiten in Darlehen",
+      description: "Eine Verbindlichkeit wird durch Darlehensaufnahme beglichen (10.000,00 €).",
+      debits: ["Verbindlichkeiten"],
+      credits: ["Darlehen"],
+      amount: 10000,
+      hint: "Eine Schuldart nimmt ab (Verbindlichkeiten), eine andere nimmt zu (Darlehen)."
+    },
+
+    // Mehrkonten-Geschäftsfall 1
+    {
+      stage: "laufend",
+      title: "GF 6 – Begleichung einer Verbindlichkeit aus Kasse und Bank",
+      description:
+        "Wir begleichen eine Verbindlichkeit in Höhe von 5.000,00 €: 2.000,00 € bar, 3.000,00 € per Banküberweisung. " +
+        "Stellen Sie einen Buchungssatz mit drei Konten auf.",
+      debits: ["Verbindlichkeiten"],
+      credits: ["Kasse", "Bankguthaben"],
+      amount: null,
+      hint: "Die Verbindlichkeit wird im Soll gemindert, Kasse und Bankguthaben im Haben."
+    },
+
+    {
+      stage: "laufend",
+      title: "GF 7 – Rohstoffeinkauf auf Ziel",
+      description: "Rohstoffeinkauf auf Ziel 5.200,00 €.",
+      debits: ["Rohstoffe"],
+      credits: ["Verbindlichkeiten"],
+      amount: 5200,
+      hint: "Vorräte (Rohstoffe) steigen, Verbindlichkeiten steigen."
+    },
+    {
+      stage: "laufend",
+      title: "GF 8 – Barabhebung vom Bankkonto",
+      description: "Barabhebung vom Bankkonto 700,00 €.",
+      debits: ["Kasse"],
+      credits: ["Bankguthaben"],
+      amount: 700,
+      hint: "Kasse steigt, Bankguthaben sinkt."
+    },
+    {
+      stage: "laufend",
+      title: "GF 9 – Kauf einer Maschine auf Ziel",
+      description: "Kauf einer Maschine auf Ziel 45.000,00 €.",
+      debits: ["Maschinen"],
+      credits: ["Verbindlichkeiten"],
+      amount: 45000,
+      hint: "Maschinenbestand steigt, Verbindlichkeiten steigen."
+    },
+    {
+      stage: "laufend",
+      title: "GF 10 – Rückzahlung eines Teils des Darlehens per Bank",
+      description: "Wir zahlen einen Teil des Darlehens per Bank zurück 15.000,00 €.",
+      debits: ["Darlehen"],
+      credits: ["Bankguthaben"],
+      amount: 15000,
+      hint: "Darlehen (Schuld) sinkt, Bankguthaben sinkt."
+    },
+    {
+      stage: "laufend",
+      title: "GF 11 – Kunde zahlt bar",
+      description: "Ein Kunde zahlt offene Forderungen bar 1.800,00 €.",
+      debits: ["Kasse"],
+      credits: ["Forderungen"],
+      amount: 1800,
+      hint: "Forderungen sinken, Kasse steigt."
+    },
+    {
+      stage: "laufend",
+      title: "GF 12 – Rohstoffeinkauf gegen Banküberweisung",
+      description: "Wir kaufen Rohstoffe und bezahlen per Banküberweisung 3.900,00 €.",
+      debits: ["Rohstoffe"],
+      credits: ["Bankguthaben"],
+      amount: 3900,
+      hint: "Rohstoffe steigen, Bankguthaben sinkt."
+    },
+
+    // Mehrkonten-Geschäftsfall 2
+    {
+      stage: "laufend",
+      title: "GF 13 – Kunde zahlt gemischt (bar und per Bank)",
+      description:
+        "Ein Kunde begleicht seine offene Rechnung über insgesamt 6.000,00 €: 2.000,00 € bar und 4.000,00 € per Banküberweisung. " +
+        "Stellen Sie einen Buchungssatz mit drei Konten auf.",
+      debits: ["Kasse", "Bankguthaben"],
+      credits: ["Forderungen"],
+      amount: null,
+      hint: "Forderungen werden im Haben gemindert, Kasse und Bankguthaben nehmen im Soll zu."
+    },
+
+    // Mehrkonten-Geschäftsfall 3
+    {
+      stage: "laufend",
+      title: "GF 14 – Lieferant wird aus Kasse und Bank bezahlt",
+      description:
+        "Eine Verbindlichkeit gegenüber einem Lieferanten in Höhe von 8.000,00 € wird beglichen: 3.000,00 € bar, 5.000,00 € per Banküberweisung.",
+      debits: ["Verbindlichkeiten"],
+      credits: ["Kasse", "Bankguthaben"],
+      amount: null,
+      hint: "Die Verbindlichkeit sinkt im Soll, Kasse und Bankguthaben werden im Haben gemindert."
+    },
+
+    // Mehrkonten-Geschäftsfall 4
+    {
+      stage: "laufend",
+      title: "GF 15 – Rohstoffeinkauf teilweise bar, teilweise auf Ziel",
+      description:
+        "Wir kaufen Rohstoffe im Gesamtwert von 10.000,00 €: 4.000,00 € zahlen wir bar, 6.000,00 € bleiben als Verbindlichkeit offen.",
+      debits: ["Rohstoffe"],
+      credits: ["Kasse", "Verbindlichkeiten"],
+      amount: null,
+      hint: "Rohstoffe steigen im Soll, Kasse und Verbindlichkeiten stehen im Haben (Auszahlung + neue Schuld)."
+    },
+
+    // Abschlussbuchungen
+    {
+      stage: "abschluss",
+      type: "groupClosing",
+      group: "aktiv",
+      title: "Allgemeiner Buchungssatz zum Abschluss der Aktivkonten",
+      description:
+        "Alle Aktivkonten (z. B. Grundstücke, Gebäude, Maschinen, Rohstoffe, Bank, Kasse …) sollen zum Jahresende über das Schlussbilanzkonto abgeschlossen werden. " +
+        "Formulieren Sie zunächst den allgemeinen Buchungssatz (z. B. „SBK an Aktivkonto“) und tragen Sie ihn dann als Sammelbuchung ein.",
+      hint: "Aktivkonten werden über das Haben abgeschlossen, das SBK steht im Soll.",
+      amount: null
+    },
+    {
+      stage: "abschluss",
+      type: "groupClosing",
+      group: "passiv",
+      title: "Allgemeiner Buchungssatz zum Abschluss der Passivkonten",
+      description:
+        "Alle Passivkonten (z. B. Eigenkapital, Hypotheken, Darlehen, Verbindlichkeiten) sollen zum Jahresende über das Schlussbilanzkonto abgeschlossen werden. " +
+        "Formulieren Sie zunächst den allgemeinen Buchungssatz (z. B. „Passivkonto an SBK“) und tragen Sie ihn dann als Sammelbuchung ein.",
+      hint: "Passivkonten werden über das Soll abgeschlossen, das SBK steht im Haben.",
+      amount: null
+    }
+  ];
+
+  // Fallback: falls irgendwann „debit/credit“ statt „debits/credits“ genutzt werden
+  tasks.forEach(t => {
+    if (t.stage === "laufend") {
+      if (!t.debits && t.debit) t.debits = [t.debit];
+      if (!t.credits && t.credit) t.credits = [t.credit];
+    }
+  });
+
+  // -------------------- Zustand --------------------
+  const ledger = {};
+  accountsData.forEach(acc => {
+    ledger[acc.name] = { type: acc.type, debit: [], credit: [] };
+  });
+  const journalEntries = [];
+
+  let currentStageIndex = 0;
+  let currentTaskIndex = 0;
+  let quizMode = false;
+  let currentQuizStage = null;
+  let currentQuizIndex = 0;
+  const quizCompleted = {};
+
+  let part2Selection = {};
+  let currentPart2Config = null;
+
+  // -------------------- Hilfsfunktionen --------------------
+  function formatAmount(value) {
+    if (value == null) return "–";
+    return value.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function addLedgerEntry(kontoName, side, amount, text, meta = {}) {
+    if (!ledger[kontoName]) return;
+    ledger[kontoName][side].push({
+      amount,
+      text,
+      ref: meta.ref || null,
+      contra: meta.contra || null
+    });
+  }
+
+  function addJournalEntry(stageId, debitText, creditText, amount, meta = {}) {
+    const prefix = meta.ref ? meta.ref + ": " : "";
+    const text = `${prefix}${debitText} an ${creditText}`;
+    journalEntries.push({ stage: stageId, text, amount: amount ?? null });
+  }
+
+  function getStageTasks(stageId) {
+    return tasks.filter(t => t.stage === stageId);
+  }
+
+  function getStageProgress(stageId) {
+    const stageTasks = getStageTasks(stageId);
+    const solved = stageTasks.filter(t => t.solved).length;
+    return { solved, total: stageTasks.length };
+  }
+
+  function isStageFullySolved(stageId) {
+    const prog = getStageProgress(stageId);
+    return prog.total > 0 && prog.solved === prog.total;
+  }
+
+  function applyGroupOpening(group) {
+    if (group === "aktiv") {
+      Object.keys(openingBalances).forEach(konto => {
+        if (ledger[konto] && ledger[konto].type === "A") {
+          const amount = openingBalances[konto];
+          addLedgerEntry(konto, "debit", amount, "Eröffnungsbuchung", { contra: "EBK" });
+          addLedgerEntry("EBK", "credit", amount, "Eröffnungsbuchung", { contra: konto });
+          addJournalEntry("eroeffnung", konto, "EBK", amount);
         }
       });
-      allTasks.sort(() => Math.random() - 0.5);
-      mixCat.tasks = allTasks.slice(0, 20);
-    })();
+    } else if (group === "passiv") {
+      Object.keys(openingBalances).forEach(konto => {
+        if (ledger[konto] && ledger[konto].type === "P") {
+          const amount = openingBalances[konto];
+          addLedgerEntry("EBK", "debit", amount, "Eröffnungsbuchung", { contra: konto });
+          addLedgerEntry(konto, "credit", amount, "Eröffnungsbuchung", { contra: "EBK" });
+          addJournalEntry("eroeffnung", "EBK", konto, amount);
+        }
+      });
+    }
+  }
 
-    // Hilfsfunktion: zufällige Reihenfolge der Antwort-Indizes
-    function shuffledIndices(n) {
-      const arr = Array.from({ length: n }, (_, i) => i);
-      for (let i = n - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+  function applyGroupClosing(group) {
+    if (group === "aktiv") {
+      Object.keys(closingBalances).forEach(konto => {
+        if (ledger[konto] && ledger[konto].type === "A") {
+          const amount = closingBalances[konto];
+          addLedgerEntry("SBK", "debit", amount, "Abschlussbuchung", { contra: konto });
+          addLedgerEntry(konto, "credit", amount, "Abschlussbuchung", { contra: "SBK" });
+          addJournalEntry("abschluss", "SBK", konto, amount);
+        }
+      });
+    } else if (group === "passiv") {
+      Object.keys(closingBalances).forEach(konto => {
+        if (ledger[konto] && ledger[konto].type === "P") {
+          const amount = closingBalances[konto];
+          addLedgerEntry(konto, "debit", amount, "Abschlussbuchung", { contra: "SBK" });
+          addLedgerEntry("SBK", "credit", amount, "Abschlussbuchung", { contra: konto });
+          addJournalEntry("abschluss", konto, "SBK", amount);
+        }
+      });
+    }
+  }
+
+  function getProgressCounts() {
+    const tasksSolved = tasks.filter(t => t.solved).length;
+    let qAnswered = 0;
+    Object.values(comprehensionQuestions).forEach(list => {
+      list.forEach(q => { if (q.answered) qAnswered++; });
+    });
+    return { tasksSolved, qAnswered };
+  }
+
+  const totalQuestions = Object.values(comprehensionQuestions)
+    .reduce((sum, list) => sum + list.length, 0);
+  const totalSteps = tasks.length + totalQuestions;
+
+  // -------------------- UI-Elemente --------------------
+  const stageNav = document.getElementById("stageNav");
+  const stageTitle = document.getElementById("stageTitle");
+  const stageIntro = document.getElementById("stageIntro");
+  const infoToggleBtn = document.getElementById("infoToggleBtn");
+  const infoBox = document.getElementById("infoBox");
+
+  const taskTitle = document.getElementById("taskTitle");
+  const taskDescription = document.getElementById("taskDescription");
+  const amountLabel = document.getElementById("amountLabel");
+  const debitSelect1 = document.getElementById("debitSelect1");
+  const debitSelect2 = document.getElementById("debitSelect2");
+  const creditSelect1 = document.getElementById("creditSelect1");
+  const creditSelect2 = document.getElementById("creditSelect2");
+
+  const checkBtn = document.getElementById("checkBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const taskStatus = document.getElementById("taskStatus");
+  const taskHint = document.getElementById("taskHint");
+  const taskTag = document.getElementById("taskTag");
+  const progressInfo = document.getElementById("progressInfo");
+  const ledgerGrid = document.getElementById("ledgerGrid");
+  const journalTableBody = document.querySelector("#journalTable tbody");
+  const filterStage = document.getElementById("filterStage");
+  const progressBar = document.getElementById("progressBar");
+  const progressPercentLabel = document.getElementById("progressPercentLabel");
+
+  const part2Div = document.getElementById("part2");
+  const part2Text = document.getElementById("part2Text");
+  const tCheckBtn = document.getElementById("tCheckBtn");
+  const localLedgerDiv = document.getElementById("localLedger");
+
+  const quizCard = document.getElementById("quizCard");
+  const quizStageLabel = document.getElementById("quizStageLabel");
+  const quizQuestion = document.getElementById("quizQuestion");
+  const quizOptionsDiv = document.getElementById("quizOptions");
+  const quizStatus = document.getElementById("quizStatus");
+  const quizNextBtn = document.getElementById("quizNextBtn");
+
+  const obAktivBody = document.getElementById("obAktivBody");
+  const obPassivBody = document.getElementById("obPassivBody");
+
+  // -------------------- Progress-Bar --------------------
+  function updateProgressBar() {
+    const { tasksSolved, qAnswered } = getProgressCounts();
+    const done = tasksSolved + qAnswered;
+    const percent = totalSteps > 0 ? Math.round(done * 100 / totalSteps) : 0;
+    progressPercentLabel.textContent = percent + " %";
+    progressBar.style.width = percent + "%";
+  }
+
+  // -------------------- Eröffnungsbilanz --------------------
+  function renderOpeningBalance() {
+    obAktivBody.innerHTML = "";
+    obPassivBody.innerHTML = "";
+    Object.keys(openingBalances).forEach(name => {
+      const amount = openingBalances[name];
+      const acc = accountsData.find(a => a.name === name);
+      if (!acc) return;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${name}</td><td>${formatAmount(amount)}</td>`;
+      if (acc.type === "A") {
+        obAktivBody.appendChild(tr);
+      } else if (acc.type === "P") {
+        obPassivBody.appendChild(tr);
       }
-      return arr;
+    });
+  }
+
+  // -------------------- Navigation --------------------
+  function buildStageNav() {
+    stageNav.innerHTML = "";
+    stages.forEach((stage, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "stage-btn";
+      btn.textContent = `${idx + 1}. ${stage.title.split(" (")[0]}`;
+      btn.dataset.index = idx;
+      btn.disabled = idx > currentStageIndex;
+      btn.addEventListener("click", () => {
+        if (idx > currentStageIndex) return;
+        currentStageIndex = idx;
+        currentTaskIndex = 0;
+        loadCurrentTask();
+        updateStageNav();
+      });
+      stageNav.appendChild(btn);
+    });
+    updateStageNav();
+  }
+
+  function updateStageNav() {
+    const buttons = stageNav.querySelectorAll(".stage-btn");
+    buttons.forEach((btn, idx) => {
+      btn.classList.toggle("active", idx === currentStageIndex);
+      const stageId = stages[idx].id;
+      const prog = getStageProgress(stageId);
+      btn.classList.toggle("done", prog.solved === prog.total && prog.total > 0 && quizCompleted[stageId] !== false);
+      btn.disabled = idx > currentStageIndex;
+    });
+  }
+
+  function fillAccountSelectFull(selectEl, optional = false) {
+    selectEl.innerHTML = "";
+    const firstOpt = document.createElement("option");
+    firstOpt.value = "";
+    firstOpt.textContent = optional ? "– kein weiteres Konto –" : "– Konto wählen –";
+    selectEl.appendChild(firstOpt);
+    accountsData.forEach(acc => {
+      const opt = document.createElement("option");
+      opt.value = opt.textContent = acc.name;
+      selectEl.appendChild(opt);
+    });
+  }
+
+  function fillAccountSelectGeneric(selectEl, task, optional = false) {
+    selectEl.innerHTML = "";
+    const firstOpt = document.createElement("option");
+    firstOpt.value = "";
+    firstOpt.textContent = optional ? "– kein weiteres Konto –" : "– Konto wählen –";
+    selectEl.appendChild(firstOpt);
+
+    const base = ["Aktivkonto", "Passivkonto", "EBK"];
+    const list = task.type === "groupClosing" ? [...base, "SBK"] : base;
+    list.forEach(label => {
+      const opt = document.createElement("option");
+      opt.value = opt.textContent = label;
+      selectEl.appendChild(opt);
+    });
+  }
+
+  function resetPart2UI() {
+    tCheckBtn.disabled = true;
+    localLedgerDiv.innerHTML = "";
+    part2Selection = {};
+    currentPart2Config = null;
+  }
+
+  // -------------------- Aufgaben laden --------------------
+  function loadCurrentTask() {
+    const stageId = stages[currentStageIndex].id;
+    const stageTasks = getStageTasks(stageId);
+    const task = stageTasks[currentTaskIndex];
+
+    stageTitle.textContent = stages[currentStageIndex].title;
+    stageIntro.textContent = stageIntros[stageId] || "";
+    infoBox.innerHTML = stageInfoBlocks[stageId] || "";
+    infoBox.style.display = "none";
+
+    taskTitle.textContent = task.title;
+    taskDescription.textContent = task.description;
+    taskStatus.textContent = "";
+    taskStatus.className = "status";
+    taskHint.textContent = "";
+
+    if (task.amount != null) {
+      amountLabel.textContent = formatAmount(task.amount);
+    } else {
+      amountLabel.textContent = "siehe Geschäftsvorfall";
     }
 
-    // --- Zustand & UI-Elemente ------------------------------
+    taskTag.textContent = `Aufgabe ${currentTaskIndex + 1} von ${stageTasks.length}`;
+    const prog = getStageProgress(stageId);
+    progressInfo.textContent = `Bearbeitet: ${prog.solved} / ${prog.total} Aufgaben in diesem Schritt`;
 
-    let currentCategory = null;
-    let currentIndex = 0;
-    let score = 0;
-    let answered = false;
+    if (task.type === "groupOpening" || task.type === "groupClosing") {
+      fillAccountSelectGeneric(debitSelect1, task, false);
+      fillAccountSelectGeneric(debitSelect2, task, true);
+      fillAccountSelectGeneric(creditSelect1, task, false);
+      fillAccountSelectGeneric(creditSelect2, task, true);
+    } else {
+      fillAccountSelectFull(debitSelect1, false);
+      fillAccountSelectFull(debitSelect2, true);
+      fillAccountSelectFull(creditSelect1, false);
+      fillAccountSelectFull(creditSelect2, true);
+    }
+    debitSelect1.value = "";
+    debitSelect2.value = "";
+    creditSelect1.value = "";
+    creditSelect2.value = "";
 
-    const modeBar = document.getElementById("modeBar");
-    const cardContainer = document.getElementById("cardContainer");
-    const progressText = document.getElementById("progressText");
-    const scoreText = document.getElementById("scoreText");
-    const progressFill = document.getElementById("progressFill");
+    part2Div.style.display = "none";
+    resetPart2UI();
 
-    // Kategorie-Buttons erzeugen
-    categories.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = "mode-btn";
-      btn.textContent = cat.title;
-      btn.dataset.id = cat.id;
-      btn.addEventListener("click", () => switchCategory(cat.id));
-      modeBar.appendChild(btn);
+    if (task.type === "groupOpening" || task.type === "groupClosing") {
+      part2Text.textContent =
+        "Nachdem der Buchungssatz korrekt ist, tragen Sie die Sammelbuchung in diese vereinfachten T-Konten ein.";
+    } else if (stageId === "laufend") {
+      part2Text.textContent =
+        "Nachdem der Buchungssatz korrekt ist, nutzen Sie diese Hauptbuch-Ansicht und markieren für alle Konten, ob sie vom Geschäftsvorfall im Soll, im Haben oder gar nicht betroffen sind.";
+    }
+
+    checkBtn.disabled = !!task.solved;
+    nextBtn.disabled = !task.solved;
+
+    quizCard.style.display = "none";
+    quizStatus.textContent = "";
+    quizStatus.className = "status";
+    quizNextBtn.disabled = true;
+
+    renderOpeningBalance();
+    renderLedger();
+    renderJournal();
+    updateStageNav();
+    updateProgressBar();
+  }
+
+  // -------------------- Part 2: Eröffnung/Abschluss --------------------
+  function setupPart2Group(task) {
+    localLedgerDiv.innerHTML = "";
+    part2Selection = {};
+    let accounts;
+    if (task.type === "groupOpening") {
+      if (task.group === "aktiv") {
+        accounts = ["Aktivkonten", "EBK"];
+        currentPart2Config = { mode: "groupOpeningAktiv", accounts };
+      } else {
+        accounts = ["EBK", "Passivkonten"];
+        currentPart2Config = { mode: "groupOpeningPassiv", accounts };
+      }
+    } else {
+      if (task.group === "aktiv") {
+        accounts = ["SBK", "Aktivkonten"];
+        currentPart2Config = { mode: "groupClosingAktiv", accounts };
+      } else {
+        accounts = ["Passivkonten", "SBK"];
+        currentPart2Config = { mode: "groupClosingPassiv", accounts };
+      }
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "konto-grid";
+
+    accounts.forEach(name => {
+      const box = document.createElement("div");
+      box.className = "konto";
+
+      const header = document.createElement("div");
+      header.className = "konto-header";
+      const t = document.createElement("span");
+      t.textContent = name + " (Sammelkonto)";
+      const type = document.createElement("span");
+      type.className = "konto-type";
+      type.textContent = "Sammelbuchung";
+      header.appendChild(t);
+      header.appendChild(type);
+      box.appendChild(header);
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>Soll</th><th>Betrag</th><th>Haben</th><th>Betrag</th></tr>";
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      const trInfo = document.createElement("tr");
+      trInfo.innerHTML = `<td colspan="4" class="small">Wählen Sie: Soll oder Haben?</td>`;
+      tbody.appendChild(trInfo);
+
+      const tr = document.createElement("tr");
+      const id = "acc-" + name.replace(/\s+/g, "_");
+
+      tr.innerHTML = `
+        <td colspan="2">
+          <label class="small">
+            <input type="radio" name="${id}" value="Soll"> Soll
+          </label>
+        </td>
+        <td colspan="2">
+          <label class="small">
+            <input type="radio" name="${id}" value="Haben"> Haben
+          </label>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      table.appendChild(tbody);
+      box.appendChild(table);
+      grid.appendChild(box);
+
+      const inputs = tr.querySelectorAll(`input[name="${id}"]`);
+      inputs.forEach(inp => {
+        inp.addEventListener("change", () => {
+          part2Selection[name] = inp.value;
+        });
+      });
     });
 
-    function switchCategory(id) {
-      currentCategory = categories.find(c => c.id === id);
-      document.querySelectorAll(".mode-btn").forEach(b => {
-        b.classList.toggle("active", b.dataset.id === id);
-      });
-      currentIndex = 0;
-      score = 0;
-      answered = false;
-      updateProgress();
-      renderTask();
-    }
+    localLedgerDiv.appendChild(grid);
+    tCheckBtn.disabled = false;
+  }
 
-    function updateProgress() {
-      if (!currentCategory) {
-        progressText.textContent = "Bitte eine Kategorie wählen.";
-        scoreText.textContent = "Punkte: 0";
-        progressFill.style.width = "0%";
-        return;
-      }
-      const total = currentCategory.tasks.length;
-      progressText.textContent = `Aufgabe ${currentIndex + 1} von ${total} – ${currentCategory.title}`;
-      scoreText.textContent = `Punkte: ${score}`;
-      const percent = (currentIndex / total) * 100;
-      progressFill.style.width = `${percent}%`;
-    }
+  // -------------------- Part 2: Laufende Buchungen – Hauptbuch-Ansicht --------------------
+  function setupPart2Laufend(task) {
+    localLedgerDiv.innerHTML = "";
+    part2Selection = {};
+    currentPart2Config = { mode: "laufend", task };
 
-    function renderTask() {
-      const cat = currentCategory;
-      if (!cat) {
-        cardContainer.innerHTML = `
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Kategorie wählen</div>
-            </div>
-            <div class="question-text">
-              Bitte wähle oben eine Kategorie (z. B. „Grundlagen & 4-Schritt-Methode“ oder „Einfacher Buchungssatz“), um zu starten.
-            </div>
-          </div>
-        `;
-        return;
-      }
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Konto</th><th>kein Eintrag</th><th>Soll</th><th>Haben</th></tr>";
+    table.appendChild(thead);
 
-      const t = cat.tasks[currentIndex];
-      answered = false;
-      updateProgress();
+    const tbody = document.createElement("tbody");
 
-      const order = shuffledIndices(t.choices.length);
-      let choicesHtml = "";
-      order.forEach((origIndex, displayIndex) => {
-        const c = t.choices[origIndex];
-        choicesHtml += `
-          <button class="choice-btn" data-index="${origIndex}">
-            ${String.fromCharCode(65 + displayIndex)}. ${c}
-          </button>
-        `;
-      });
+    accountsData.forEach(acc => {
+      if (acc.name === "EBK" || acc.name === "SBK") return;
 
-      cardContainer.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Geschäftsfall / Frage</div>
-            <div class="card-meta">${cat.description}</div>
-          </div>
-          <div class="question-text">
-            ${t.text}
-          </div>
-          ${t.extra ? `<div class="question-extra">${t.extra}</div>` : ""}
-          <div class="choices">
-            ${choicesHtml}
-          </div>
-          <div id="feedback" class="feedback" style="display:none;"></div>
-          <div class="actions">
-            <span class="pill">Erst Antwort wählen, dann „Nächste Aufgabe“.</span>
-            <button class="btn" id="nextBtn" disabled>
-              Nächste Aufgabe →
-            </button>
-          </div>
-        </div>
+      const tr = document.createElement("tr");
+      const id = "hl-" + acc.name.replace(/\s+/g, "_");
+      tr.innerHTML = `
+        <td style="text-align:left;">${acc.name}</td>
+        <td>
+          <input type="radio" name="${id}" value="none" checked>
+        </td>
+        <td>
+          <input type="radio" name="${id}" value="Soll">
+        </td>
+        <td>
+          <input type="radio" name="${id}" value="Haben">
+        </td>
       `;
+      tbody.appendChild(tr);
 
-      const buttons = cardContainer.querySelectorAll(".choice-btn");
-      const feedback = document.getElementById("feedback");
-      const nextBtn = document.getElementById("nextBtn");
+      const inputs = tr.querySelectorAll(`input[name="${id}"]`);
+      inputs.forEach(inp => {
+        inp.addEventListener("change", () => {
+          part2Selection[acc.name] = inp.value;
+        });
+      });
+      part2Selection[acc.name] = "none";
+    });
 
-      buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          if (answered) return;
-          answered = true;
-          const idx = parseInt(btn.getAttribute("data-index"), 10);
+    table.appendChild(tbody);
+    localLedgerDiv.appendChild(table);
+    tCheckBtn.disabled = false;
+  }
 
-          buttons.forEach((b) => {
-            const i = parseInt(b.getAttribute("data-index"), 10);
-            if (i === t.correct) {
-              b.classList.add("correct");
-            }
-            if (i === idx && idx !== t.correct) {
-              b.classList.add("wrong");
-            }
-            b.disabled = true;
-          });
+  // -------------------- Hauptbuch T-Konten (Übersicht) --------------------
+  function renderLedger() {
+    const showClosing = isStageFullySolved("abschluss");
+    ledgerGrid.innerHTML = "";
 
-          if (idx === t.correct) {
-            score++;
-            feedback.textContent = "Richtig: " + t.explanation;
-            feedback.className = "feedback correct";
-          } else {
-            feedback.textContent = "Nicht ganz: " + t.explanation;
-            feedback.className = "feedback wrong";
+    Object.keys(ledger).forEach(name => {
+      const data = ledger[name];
+
+      const box = document.createElement("div");
+      box.className = "konto";
+
+      const header = document.createElement("div");
+      header.className = "konto-header";
+      const t = document.createElement("span");
+      t.textContent = name;
+      const type = document.createElement("span");
+      type.className = "konto-type";
+      type.textContent = data.type === "A"
+        ? "Aktivkonto"
+        : data.type === "P"
+        ? "Passivkonto"
+        : "Abschlusskonto";
+      header.appendChild(t);
+      header.appendChild(type);
+      box.appendChild(header);
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>Soll</th><th>Betrag</th><th>Haben</th><th>Betrag</th></tr>";
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      const maxRows = Math.max(data.debit.length, data.credit.length, 1);
+      let sumDebit = 0;
+      let sumCredit = 0;
+
+      for (let i = 0; i < maxRows; i++) {
+        const tr = document.createElement("tr");
+        const dEntry = data.debit[i];
+        const cEntry = data.credit[i];
+
+        let dText = "";
+        let dAmount = "";
+        if (dEntry) {
+          const val = dEntry.amount ?? 0;
+          sumDebit += val;
+          const parts = [];
+          if (dEntry.ref) parts.push(dEntry.ref);
+          if (
+            dEntry.contra &&
+            dEntry.contra !== "EBK" &&
+            dEntry.contra !== "SBK" &&
+            name !== "EBK" &&
+            name !== "SBK"
+          ) {
+            const abbr = accountAbbrev[dEntry.contra] || dEntry.contra;
+            parts.push(abbr);
           }
-          feedback.style.display = "block";
-          scoreText.textContent = `Punkte: ${score}`;
-          nextBtn.disabled = false;
+          dText = parts.join(" – ");
+          dAmount = dEntry.amount == null ? "–" : formatAmount(val);
+        }
+
+        let cText = "";
+        let cAmount = "";
+        if (cEntry) {
+          const val = cEntry.amount ?? 0;
+          sumCredit += val;
+          const parts = [];
+          if (cEntry.ref) parts.push(cEntry.ref);
+          if (
+            cEntry.contra &&
+            cEntry.contra !== "EBK" &&
+            cEntry.contra !== "SBK" &&
+            name !== "EBK" &&
+            name !== "SBK"
+          ) {
+            const abbr = accountAbbrev[cEntry.contra] || cEntry.contra;
+            parts.push(abbr);
+          }
+          cText = parts.join(" – ");
+          cAmount = cEntry.amount == null ? "–" : formatAmount(val);
+        }
+
+        tr.innerHTML = `
+          <td>${dText}</td>
+          <td>${dAmount}</td>
+          <td>${cText}</td>
+          <td>${cAmount}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      if (showClosing && (data.type === "A" || data.type === "P")) {
+        const tr = document.createElement("tr");
+        tr.style.borderTop = "2px solid #111827";
+        tr.style.borderBottom = "2px solid #111827";
+        tr.style.fontWeight = "600";
+
+        const debitTotal = sumDebit > 0 ? formatAmount(sumDebit) : "";
+        const creditTotal = sumCredit > 0 ? formatAmount(sumCredit) : "";
+
+        tr.innerHTML = `
+          <td></td>
+          <td>${debitTotal}</td>
+          <td></td>
+          <td>${creditTotal}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      box.appendChild(table);
+      ledgerGrid.appendChild(box);
+    });
+  }
+
+  // -------------------- Grundbuch --------------------
+  function renderJournal() {
+    const filter = filterStage.value;
+    journalTableBody.innerHTML = "";
+    journalEntries.forEach((entry, idx) => {
+      if (filter !== "all" && entry.stage !== filter) return;
+      const tr = document.createElement("tr");
+      const stageLabel =
+        entry.stage === "eroeffnung" ? "Eröffnung" :
+        entry.stage === "laufend" ? "Laufend" : "Abschluss";
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${stageLabel}</td>
+        <td>${entry.text}</td>
+        <td>${formatAmount(entry.amount)}</td>
+      `;
+      journalTableBody.appendChild(tr);
+    });
+  }
+
+  // -------------------- Quiz --------------------
+  function startQuiz(stageId) {
+    const questions = comprehensionQuestions[stageId];
+    if (!questions || questions.length === 0) {
+      unlockNextStage(stageId);
+      return;
+    }
+    quizMode = true;
+    currentQuizStage = stageId;
+    currentQuizIndex = 0;
+    quizCompleted[stageId] = false;
+    loadQuizQuestion();
+    quizCard.style.display = "block";
+    taskStatus.textContent = "";
+    taskHint.textContent = "";
+  }
+
+  function loadQuizQuestion() {
+    const list = comprehensionQuestions[currentQuizStage];
+    const q = list[currentQuizIndex];
+    quizStageLabel.textContent =
+      currentQuizStage === "eroeffnung"
+        ? "Verständnisfragen zu den Eröffnungsbuchungen"
+        : "Verständnisfragen zu den laufenden Buchungen";
+    quizQuestion.textContent = q.text;
+    quizOptionsDiv.innerHTML = "";
+    quizStatus.textContent = "";
+    quizStatus.className = "status";
+    quizNextBtn.disabled = true;
+
+    q.options.forEach((optText, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quiz-option";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => handleQuizAnswer(idx));
+      quizOptionsDiv.appendChild(btn);
+    });
+  }
+
+  function handleQuizAnswer(chosenIdx) {
+    const list = comprehensionQuestions[currentQuizStage];
+    const q = list[currentQuizIndex];
+    const optionButtons = quizOptionsDiv.querySelectorAll(".quiz-option");
+    optionButtons.forEach((btn, idx) => {
+      btn.classList.remove("correct", "wrong");
+      if (idx === chosenIdx) {
+        if (idx === q.correctIndex) {
+          btn.classList.add("correct");
+        } else {
+          btn.classList.add("wrong");
+        }
+      }
+    });
+
+    if (chosenIdx === q.correctIndex) {
+      q.answered = true;
+      quizStatus.textContent = "Richtig. " + q.explanation;
+      quizStatus.className = "status ok";
+      quizNextBtn.disabled = false;
+      updateProgressBar();
+    } else {
+      quizStatus.textContent = "Nicht ganz korrekt. Überlegen Sie noch einmal.";
+      quizStatus.className = "status err";
+      quizNextBtn.disabled = true;
+    }
+  }
+
+  function finishQuiz(stageId) {
+    quizMode = false;
+    quizCompleted[stageId] = true;
+    quizCard.style.display = "none";
+    unlockNextStage(stageId);
+    updateProgressBar();
+  }
+
+  function unlockNextStage(stageId) {
+    const idx = stages.findIndex(s => s.id === stageId);
+    if (idx >= 0 && idx < stages.length - 1) {
+      currentStageIndex = idx + 1;
+      currentTaskIndex = 0;
+      loadCurrentTask();
+    } else {
+      taskStatus.textContent =
+        "Alle Aufgaben und Verständnisfragen sind bearbeitet. Sie haben den Weg vom EBK über die laufenden Buchungen bis zum SBK vollständig durchlaufen.";
+      taskStatus.className = "status ok";
+      nextBtn.disabled = true;
+    }
+  }
+
+  function handleStageMaybeAdvance(stageId) {
+    if (!isStageFullySolved(stageId)) return;
+    if (comprehensionQuestions[stageId] && !quizCompleted[stageId]) {
+      startQuiz(stageId);
+    } else {
+      unlockNextStage(stageId);
+    }
+  }
+
+  // -------------------- Interaktion: Teil 1 --------------------
+  function equalSets(a, b) {
+    if (a.length !== b.length) return false;
+    const aSorted = [...a].sort();
+    const bSorted = [...b].sort();
+    for (let i = 0; i < aSorted.length; i++) {
+      if (aSorted[i] !== bSorted[i]) return false;
+    }
+    return true;
+  }
+
+  checkBtn.addEventListener("click", () => {
+    const stageId = stages[currentStageIndex].id;
+    const stageTasks = getStageTasks(stageId);
+    const task = stageTasks[currentTaskIndex];
+
+    const d1 = debitSelect1.value;
+    const d2 = debitSelect2.value;
+    const c1 = creditSelect1.value;
+    const c2 = creditSelect2.value;
+
+    if (task.type === "groupOpening" || task.type === "groupClosing") {
+      const debit = d1;
+      const credit = c1;
+
+      if (!debit || !credit) {
+        taskStatus.textContent = "Bitte wählen Sie Soll- und Haben-Konto.";
+        taskStatus.className = "status err";
+        return;
+      }
+      if (debit === credit) {
+        taskStatus.textContent = "Soll- und Haben-Konto dürfen nicht identisch sein.";
+        taskStatus.className = "status err";
+        return;
+      }
+
+      let correct = false;
+
+      if (task.type === "groupOpening") {
+        if (task.group === "aktiv") {
+          correct = (debit === "Aktivkonto" && credit === "EBK");
+        } else if (task.group === "passiv") {
+          correct = (debit === "EBK" && credit === "Passivkonto");
+        }
+      } else if (task.type === "groupClosing") {
+        if (task.group === "aktiv") {
+          correct = (debit === "SBK" && credit === "Aktivkonto");
+        } else if (task.group === "passiv") {
+          correct = (debit === "Passivkonto" && credit === "SBK");
+        }
+      }
+
+      if (correct) {
+        taskStatus.textContent =
+          "Richtig! Der allgemeine Buchungssatz stimmt. Tragen Sie die Sammelbuchung jetzt in die T-Konten ein (Teil 2).";
+        taskStatus.className = "status ok";
+        taskHint.textContent = task.hint;
+        checkBtn.disabled = true;
+
+        part2Div.style.display = "block";
+        setupPart2Group(task);
+      } else {
+        taskStatus.textContent =
+          "Leider falsch. Überlegen Sie, wie Aktiv- und Passivkonten grundsätzlich (Eröffnung/Abschluss) behandelt werden.";
+        taskStatus.className = "status err";
+        taskHint.textContent = task.hint;
+      }
+      return;
+    }
+
+    // Laufende Buchungen
+    const chosenDebits = [d1, d2].filter(v => v);
+    const chosenCredits = [c1, c2].filter(v => v);
+
+    if (chosenDebits.length === 0 || chosenCredits.length === 0) {
+      taskStatus.textContent = "Bitte wählen Sie mindestens je ein Soll- und ein Habenkonto.";
+      taskStatus.className = "status err";
+      return;
+    }
+
+    const allChosen = [...chosenDebits, ...chosenCredits];
+    const unique = new Set(allChosen);
+    if (unique.size !== allChosen.length) {
+      taskStatus.textContent = "Ein Konto darf im Buchungssatz nicht doppelt vorkommen.";
+      taskStatus.className = "status err";
+      return;
+    }
+
+    const expectedDebits = task.debits || [];
+    const expectedCredits = task.credits || [];
+
+    const correct =
+      equalSets(chosenDebits, expectedDebits) &&
+      equalSets(chosenCredits, expectedCredits);
+
+    if (correct) {
+      const gfNo = getStageTasks("laufend").indexOf(task) + 1;
+      task.gfNo = gfNo;
+      task.journalSolved = true;
+
+      const debitText = expectedDebits.join(", ");
+      const creditText = expectedCredits.join(", ");
+
+      addJournalEntry(task.stage, debitText, creditText, task.amount ?? null, {
+        ref: gfNo ? "GF " + gfNo : null
+      });
+
+      taskStatus.textContent =
+        "Teil 1 korrekt! Der Buchungssatz ist richtig. Tragen Sie den Geschäftsvorfall jetzt im Hauptbuch ein (Teil 2).";
+      taskStatus.className = "status ok";
+      taskHint.textContent = task.hint;
+
+      checkBtn.disabled = true;
+      part2Div.style.display = "block";
+      setupPart2Laufend(task);
+
+      renderJournal();
+      updateStageNav();
+      updateProgressBar();
+    } else {
+      taskStatus.textContent =
+        "Leider falsch. Prüfen Sie noch einmal, welche Konten (und wie viele) von dem Geschäftsvorfall betroffen sind.";
+      taskStatus.className = "status err";
+      taskHint.textContent = task.hint;
+    }
+  });
+
+  // -------------------- Interaktion: Teil 2 --------------------
+  tCheckBtn.addEventListener("click", () => {
+    const stageId = stages[currentStageIndex].id;
+    const stageTasks = getStageTasks(stageId);
+    const task = stageTasks[currentTaskIndex];
+
+    if (!currentPart2Config) {
+      taskStatus.textContent = "Teil 2 ist für diese Aufgabe nicht aktiviert.";
+      taskStatus.className = "status err";
+      return;
+    }
+
+    const mode = currentPart2Config.mode;
+    const sel = part2Selection;
+
+    function allSelected(required) {
+      return required.every(name => sel[name] === "Soll" || sel[name] === "Haben");
+    }
+
+    if (mode === "groupOpeningAktiv") {
+      const required = ["Aktivkonten", "EBK"];
+      if (!allSelected(required)) {
+        taskStatus.textContent = "Bitte für Aktivkonten und EBK Soll oder Haben wählen.";
+        taskStatus.className = "status err";
+        return;
+      }
+      if (sel["Aktivkonten"] === "Soll" && sel["EBK"] === "Haben") {
+        applyGroupOpening("aktiv");
+        task.solved = true;
+        tCheckBtn.disabled = true;
+        nextBtn.disabled = false;
+        taskStatus.textContent =
+          "Eintragung korrekt! Die Aktivkonten sind nun über das EBK eröffnet worden.";
+        taskStatus.className = "status ok";
+      } else {
+        taskStatus.textContent =
+          "Die Seitenwahl ist nicht korrekt. Aktivkonten werden im Soll, das EBK im Haben eröffnet.";
+        taskStatus.className = "status err";
+        renderLedger();
+        return;
+      }
+    } else if (mode === "groupOpeningPassiv") {
+      const required = ["EBK", "Passivkonten"];
+      if (!allSelected(required)) {
+        taskStatus.textContent = "Bitte für EBK und Passivkonten Soll oder Haben wählen.";
+        taskStatus.className = "status err";
+        return;
+      }
+      if (sel["EBK"] === "Soll" && sel["Passivkonten"] === "Haben") {
+        applyGroupOpening("passiv");
+        task.solved = true;
+        tCheckBtn.disabled = true;
+        nextBtn.disabled = false;
+        taskStatus.textContent =
+          "Eintragung korrekt! Die Passivkonten sind nun über das EBK eröffnet worden.";
+        taskStatus.className = "status ok";
+      } else {
+        taskStatus.textContent =
+          "Die Seitenwahl ist nicht korrekt. Passivkonten werden im Haben, das EBK im Soll eröffnet.";
+        taskStatus.className = "status err";
+        renderLedger();
+        return;
+      }
+    } else if (mode === "groupClosingAktiv") {
+      const required = ["SBK", "Aktivkonten"];
+      if (!allSelected(required)) {
+        taskStatus.textContent = "Bitte für SBK und Aktivkonten Soll oder Haben wählen.";
+        taskStatus.className = "status err";
+        return;
+      }
+      if (sel["SBK"] === "Soll" && sel["Aktivkonten"] === "Haben") {
+        applyGroupClosing("aktiv");
+        task.solved = true;
+        tCheckBtn.disabled = true;
+        nextBtn.disabled = false;
+        taskStatus.textContent =
+          "Eintragung korrekt! Die Aktivkonten sind nun über das SBK abgeschlossen.";
+        taskStatus.className = "status ok";
+      } else {
+        taskStatus.textContent =
+          "Die Seitenwahl ist nicht korrekt. Aktivkonten werden im Haben abgeschlossen, das SBK steht im Soll.";
+        taskStatus.className = "status err";
+        renderLedger();
+        return;
+      }
+    } else if (mode === "groupClosingPassiv") {
+      const required = ["Passivkonten", "SBK"];
+      if (!allSelected(required)) {
+        taskStatus.textContent = "Bitte für Passivkonten und SBK Soll oder Haben wählen.";
+        taskStatus.className = "status err";
+        return;
+      }
+      if (sel["Passivkonten"] === "Soll" && sel["SBK"] === "Haben") {
+        applyGroupClosing("passiv");
+        task.solved = true;
+        tCheckBtn.disabled = true;
+        nextBtn.disabled = false;
+        taskStatus.textContent =
+          "Eintragung korrekt! Die Passivkonten sind nun über das SBK abgeschlossen.";
+        taskStatus.className = "status ok";
+      } else {
+        taskStatus.textContent =
+          "Die Seitenwahl ist nicht korrekt. Passivkonten werden im Soll abgeschlossen, das SBK steht im Haben.";
+        taskStatus.className = "status err";
+        renderLedger();
+        return;
+      }
+    } else if (mode === "laufend") {
+      if (!task.journalSolved) {
+        taskStatus.textContent =
+          "Ermitteln Sie zuerst den Buchungssatz in Teil 1, bevor Sie die Eintragung im Hauptbuch vornehmen.";
+        taskStatus.className = "status err";
+        return;
+      }
+
+      const expectedDebits = task.debits || [];
+      const expectedCredits = task.credits || [];
+
+      let ok = true;
+
+      accountsData.forEach(acc => {
+        if (acc.name === "EBK" || acc.name === "SBK") return;
+        const mark = sel[acc.name] || "none";
+        const shouldBeDebit = expectedDebits.includes(acc.name);
+        const shouldBeCredit = expectedCredits.includes(acc.name);
+
+        if (shouldBeDebit && mark !== "Soll") ok = false;
+        if (shouldBeCredit && mark !== "Haben") ok = false;
+        if (!shouldBeDebit && !shouldBeCredit && mark !== "none") ok = false;
+      });
+
+      if (!ok) {
+        taskStatus.textContent =
+          "Die Zuordnung zu Soll/Haben im Hauptbuch ist nicht korrekt. Markieren Sie nur die wirklich betroffenen Konten.";
+        taskStatus.className = "status err";
+        return;
+      }
+
+      const gfLabel = task.gfNo ? "GF " + task.gfNo : null;
+      const baseAmount = task.amount ?? null;
+
+      expectedDebits.forEach(konto => {
+        addLedgerEntry(konto, "debit", baseAmount, task.title, {
+          ref: gfLabel,
+          contra: expectedCredits[0] || null
+        });
+      });
+      expectedCredits.forEach(konto => {
+        addLedgerEntry(konto, "credit", baseAmount, task.title, {
+          ref: gfLabel,
+          contra: expectedDebits[0] || null
         });
       });
 
-      nextBtn.addEventListener("click", () => {
-        const total = currentCategory.tasks.length;
-        if (currentIndex < total - 1) {
-          currentIndex++;
-          renderTask();
-        } else {
-          renderResult();
-        }
-      });
+      task.solved = true;
+      tCheckBtn.disabled = true;
+      nextBtn.disabled = false;
+
+      taskStatus.textContent =
+        "Teil 2 korrekt! Die Konten wurden im Hauptbuch auf der richtigen Seite markiert und der Geschäftsvorfall ist nun eingetragen.";
+      taskStatus.className = "status ok";
     }
 
-    function renderResult() {
-      const total = currentCategory.tasks.length;
-      const percent = Math.round((score / total) * 100);
+    renderLedger();
+    renderJournal();
+    updateStageNav();
+    updateProgressBar();
+    handleStageMaybeAdvance(stageId);
+  });
 
-      let message = "";
-      if (percent === 100) {
-        message = "Top-Ergebnis – die Inhalte dieser Kategorie sitzen sehr sicher.";
-      } else if (percent >= 75) {
-        message = "Gutes Niveau – einzelne Fragen noch einmal gezielt wiederholen.";
-      } else if (percent >= 50) {
-        message = "Solide Basis – wiederhole vor allem die fachlichen Erklärtexte.";
-      } else {
-        message = "Hier lohnt sich eine Wiederholung der Grundlagen (z. B. 4-Schritt-Methode und Beispiele im Heft).";
-      }
-
-      progressFill.style.width = "100%";
-      progressText.textContent = `Ergebnis – ${currentCategory.title}`;
-      scoreText.textContent = `Punkte: ${score} von ${total}`;
-
-      cardContainer.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Auswertung</div>
-            <div class="card-meta">${currentCategory.description}</div>
-          </div>
-          <div class="question-text">
-            Du hast <strong>${score} von ${total}</strong> Aufgaben richtig gelöst (${percent} %).
-          </div>
-          <div class="feedback ${percent >= 50 ? "correct" : "wrong"}" style="margin-top:0.8rem;">
-            ${message}
-          </div>
-          <div class="actions" style="margin-top:1.1rem;">
-            <button class="btn" onclick="restartCategory()">Kategorie erneut starten</button>
-            <button class="btn secondary" onclick="backToSelection()">Zurück zur Kategorienwahl</button>
-          </div>
-        </div>
-      `;
+  // -------------------- Quiz-Navigation --------------------
+  quizNextBtn.addEventListener("click", () => {
+    const list = comprehensionQuestions[currentQuizStage];
+    if (!list) return;
+    if (currentQuizIndex < list.length - 1) {
+      currentQuizIndex += 1;
+      loadQuizQuestion();
+    } else {
+      finishQuiz(currentQuizStage);
     }
+  });
 
-    function restartCategory() {
-      currentIndex = 0;
-      score = 0;
-      answered = false;
-      updateProgress();
-      renderTask();
+  // -------------------- Aufgaben-Navigation --------------------
+  nextBtn.addEventListener("click", () => {
+    const stageId = stages[currentStageIndex].id;
+    const stageTasks = getStageTasks(stageId);
+    if (currentTaskIndex < stageTasks.length - 1) {
+      currentTaskIndex += 1;
+      loadCurrentTask();
+    } else {
+      handleStageMaybeAdvance(stageId);
     }
+  });
 
-    function backToSelection() {
-      currentCategory = null;
-      currentIndex = 0;
-      score = 0;
-      answered = false;
-      updateProgress();
-      renderTask();
-    }
+  filterStage.addEventListener("change", renderJournal);
 
-    // Initialbildschirm
-    renderTask();
-  </script>
+  // Infobox Toggle
+  infoToggleBtn.addEventListener("click", () => {
+    if (!infoBox.innerHTML.trim()) return;
+    infoBox.style.display = infoBox.style.display === "none" ? "block" : "none";
+  });
+
+  // -------------------- Initialisierung --------------------
+  renderOpeningBalance();
+  buildStageNav();
+  loadCurrentTask();
+</script>
 </body>
 </html>
